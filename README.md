@@ -1,0 +1,1 @@
+# nib - Node IRC Bot
