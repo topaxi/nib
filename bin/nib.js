@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('../plugins/seen')
+
 var Nib = require('../index').Nib
 
 var n = new Nib({ 'host':    'localhost'
