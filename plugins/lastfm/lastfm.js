@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 var Proxy  = require('node-proxy')
   , http   = require('http')
   , query  = require('querystring')
