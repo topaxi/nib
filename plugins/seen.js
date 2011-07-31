@@ -1,23 +1,22 @@
 var Commands = require('../lib/commands')
 
 Commands.add('seen'
-  , 'Outputs the channel and date on which the given nick was last seen.'
+  , 'Outputs the date on which the given nick was last seen.'
   , function(bot) {
     bot._seen = {}
     bot.irc.on('part', setSeen)
     bot.irc.on('quit', setSeen)
 
-    bot.irc.on('join', function(user, channel) {
+    bot.irc.on('join', function(user) {
       var nick = user.split('!')[0]
 
       delete bot._seen[nick.toLowerCase()]
     })
 
-    function setSeen(user, channel) {
+    function setSeen(user) {
       var nick = user.split('!')[0]
 
       bot._seen[nick.toLowerCase()] = { 'nick':    nick
-                                      , 'channel': channel
                                       , 'time':    new Date
                                       }
     }
@@ -43,7 +42,7 @@ Commands.add('seen'
       else if (bot._seen[lnick]) {
         var seen = bot._seen[lnick]
 
-       say('I have "'+ seen.nick +'" last seen in '+ seen.channel +' on '+ seen.time)
+       say('I have "'+ seen.nick +'" last seen on '+ seen.time)
       }
       else {
         say('I haven\'t seen "'+ nick +'"')
