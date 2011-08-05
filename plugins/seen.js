@@ -22,6 +22,8 @@ Commands.add('seen'
     }
   }
   , function(from, to, nick) {
+    if (!nick || !nick.trim()) return
+
     var self  = this
       , bot   = self._bot
       , lnick = nick.toLowerCase()
@@ -42,7 +44,7 @@ Commands.add('seen'
       else if (bot._seen[lnick]) {
         var seen = bot._seen[lnick]
 
-       say('I have "'+ seen.nick +'" last seen on '+ seen.time)
+        say('I have "'+ seen.nick +'" last seen on '+ seen.time)
       }
       else {
         say('I haven\'t seen "'+ nick +'"')
