@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
-require('../plugins/seen')
+var Nib    = require('../index').Nib
+  , config = { 'host':    'localhost'
+             , 'port':    6667
+             , 'ssl':     false
+             , 'channel': '#test'
+             , 'nick':    'nib'
+             , 'plugins': [ 'seen'
+                          ]
+             }
 
-var Nib = require('../index').Nib
-
-var n = new Nib({ 'host':    'localhost'
-                , 'port':    6667
-                , 'ssl':     false
-                , 'channel': '#test'
-                , 'nick':    'nib'
-                })
+var n = new Nib(config)
 
 process.on('SIGINT', function() {
   n.quit()
