@@ -53,7 +53,7 @@ var Global_Objects = [ /* Constructors */
                      , 'Function'
                      //, 'Iterator'
                      , 'Number'
-                     ,' Object'
+                     , 'Object'
                      , 'RegExp'
                      , 'String'
                        /* E4X Constructors */
