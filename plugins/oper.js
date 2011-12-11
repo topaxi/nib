@@ -7,10 +7,8 @@ module.exports = function(bot) {
   bot.irc.on('join', function(user) {
     var nick = user.split('!')[0]
 
-    bot.say('hmmm')
-
     if (~bot._oper.indexOf(nick)) {
-      bot.say('Welcome back, master ' + nick)
+      bot.say('Welcome back master ' + nick)
       op(nick)
     } 
   })
