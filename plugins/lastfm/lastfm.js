@@ -1,5 +1,5 @@
 if (typeof Proxy == 'undefined') {
-  var Proxy = require('node-proxy')
+  Proxy = require('node-proxy')
 }
 
 var http   = require('http')
