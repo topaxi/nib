@@ -13,11 +13,11 @@ Commands.add('bofh'
 
       res.on('data', function(chunk) { data += chunk })
       res.on('end', function() {
-        excuses = data.split('\n').map(function(val) {
+        excuses.concat(data.split('\n').map(function(val) {
           val = val.trim()
 
           if (val) return val
-        })
+        }))
       })
     })
     .on('error', function(err) { console.log(err) })
