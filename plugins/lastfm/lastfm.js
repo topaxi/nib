@@ -1,5 +1,8 @@
-var Proxy  = require('node-proxy')
-  , http   = require('http')
+if (typeof Proxy == 'undefined') {
+  var Proxy = require('node-proxy')
+}
+
+var http   = require('http')
   , query  = require('querystring')
   , noop   = function() { }
   , lastfm = module.exports = {}
