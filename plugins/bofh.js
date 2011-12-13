@@ -41,5 +41,7 @@ Commands.add('bofh'
 )
 
 function say(bot, from) {
-  bot.say(from, excuses[~~(Math.random() * (excuses.length+1))])
+  var excuse = excuses[~~(Math.random() * (excuses.length+1))]
+
+  if (excuse) bot.say(from, excuse)
 }
