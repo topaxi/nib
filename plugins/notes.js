@@ -6,15 +6,11 @@ Commands.add('leavenote'
     bot._notes = {}
 
     // Give note to user on join
-    bot.irc.on('join', function(user) {
-      printAllNotes(user)
-    })
+    bot.irc.on('join', printAllNotes)
 
     // Or if user writes to the channel
     // future version could maybe check idle status
-    bot.irc.on('privmsg', function(user, message) {
-      printAllNotes(user)
-    })
+    bot.irc.on('privmsg', printAllNotes)
 
     function printAllNotes(user) {
       var nick  = user.split('!')[0]
@@ -24,7 +20,7 @@ Commands.add('leavenote'
         bot.notice(nick, 'people left notes for you:')
 
         notes.forEach(function(note) {
-          var d          = note.time
+          var d         = note.time
             , timestamp = d.getDate() +'.'+ (d.getMonth() + 1) + '.'
                           +' '+
                           d.getHours() +':'+ d.getMinutes()
@@ -43,29 +39,23 @@ Commands.add('leavenote'
       , noteTo = message.split(' ')[0]
       , note   = message.slice(noteTo.length + 1)
 
-    if (note.length == 0) { 
-      return say('No note given!')
+    if (!note.length) {
+      return bot.notice(from, 'No note given!')
     }
+
+    note = { 'from' : from
+           , 'nick' : noteTo
+           , 'note' : note
+           , 'time' : new Date
+           }
 
     if (bot._notes[noteTo]) {
-      // Already added a note
-      bot._notes[noteTo].push({ 'from' : from
-                              , 'nick' : noteTo
-                              , 'note' : note
-                              , 'time' : new Date
-                              })
+      bot._notes[noteTo].push(note)
     }
     else {
-      // First note
-      bot._notes[noteTo] = [{ 'from' : from
-                            , 'nick' : noteTo
-                            , 'note' : note
-                            , 'time' : new Date
-                            }]
-    } 
-
-    function say(text) {
-      self.say(from, to, from +': '+ text)
+      bot._notes[noteTo] = [note]
     }
+
+    bot.notice(from, 'Added note for '+ noteTo)
   }
 )
