@@ -6,6 +6,7 @@ var Nib    = require('../index').Nib
              , 'ssl':     false
              , 'channel': '#test'
              , 'nick':    'nib'
+             , 'timeout': 1000 * 60 * 10
              , 'plugins': [ 'seen'
                           ]
              }
