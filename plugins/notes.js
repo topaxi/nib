@@ -34,6 +34,9 @@ Commands.add('leavenote'
     }
   }
   , function(from, to, message) {
+    if (!message) {
+      return bot.notice(from, 'No message given!')
+    }
     var self   = this
       , bot    = self._bot
       , noteTo = message.split(' ')[0]
