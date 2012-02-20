@@ -13,7 +13,7 @@ Commands.add('bofh'
 
       res.on('data', function(chunk) { data += chunk })
       res.on('end', function() {
-        excuses.concat(data.split('\n').map(function(val) {
+        excuses = excuses.concat(data.split('\n').map(function(val) {
           val = val.trim()
 
           if (val) return val
