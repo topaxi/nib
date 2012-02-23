@@ -17,7 +17,7 @@ Commands.add('leavenote'
         , notes = bot._notes[nick]
 
       if (notes && notes.length > 0) {
-        bot.notice(nick, 'people left notes for you:')
+        bot.say(nick, 'people left notes for you:')
 
         notes.forEach(function(note) {
           var d         = note.time
@@ -25,8 +25,10 @@ Commands.add('leavenote'
                           +' '+
                           d.getHours() +':'+ d.getMinutes()
 
-          bot.notice(nick,
+          bot.say(nick,
             'from '+ note.from +', added '+ timestamp +': '+ note.note)
+
+          bot.notice(note.from, 'Note to '+ nick +' delivered!')
         })
 
         bot._notes[nick] = []
