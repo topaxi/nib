@@ -29,6 +29,12 @@ Commands.add('urlgen'
   }
 )
 
-var urlgen_Services = { 'we' : 'wiki eng'
+var urlgen_Services = { 'we' : 'http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Article'
                       , 'wg' : 'http://de.wikipedia.org/wiki/Special:Search?search=%s&go=Artikel'
+                      , 'g' : 'http://www.google.com/search?q=%s'
+                      , 'so' : 'http://stackoverflow.com/search?q=%s'
+                      , 'wa' : 'http://www.wolframalpha.com/input/?i=%s'
+                      , 't' : 'http://www.dict.cc/?s=%s'
+                      , 'yt' : 'http://www.youtube.com/results?search_query=%s'
+                      , 'a' : 'http://developer.android.com/search.html#q=%s&t=0'
                       }
