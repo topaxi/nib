@@ -15,7 +15,7 @@ Commands.add('urlgen'
       , bot     = self._bot
       , searchType = search.split(' ')[0]
       , searchQuery = search.slice(searchType.length + 1)
-      , searchUrl = urlgen_Services[searchType.toLowerCase()]
+      , searchUrl = urlgenServices[searchType.toLowerCase()]
 
     if (!searchUrl) {
       return bot.notice(from, 'No entry for requested service!')
