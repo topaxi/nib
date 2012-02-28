@@ -7,7 +7,7 @@ Commands.add('urlgen'
   , 'Generates urls for different websites/web services'
   , function(from, to, search) {
     search = search ? search.trim() : ''
-    if (!search || search.length == 0) {
+    if (search.length == 0) {
       return this._bot.notice(from, 'Please provide type and request!')
     }
 
@@ -17,7 +17,7 @@ Commands.add('urlgen'
       , searchQuery = search.slice(searchType.length + 1)
       , searchUrl = urlgen_Services[searchType.toLowerCase()]
 
-		if (!~searchUrl) {
+    if (!searchUrl) {
       return bot.notice(from, 'No entry for requested service!')
     } else if (!searchQuery) {
       return bot.notice(from, 'No query given!')
