@@ -19,7 +19,8 @@ Commands.add('urlgen'
 
     if (!searchUrl) {
       return bot.notice(from, 'No entry for requested service!')
-    } else if (!searchQuery) {
+    } 
+    else if (!searchQuery) {
       return bot.notice(from, 'No query given!')
     }
 
@@ -29,7 +30,7 @@ Commands.add('urlgen'
   }
 )
 
-var urlgen_Services = { 'we' : 'http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Article'
+var urlgenServices = { 'we' : 'http://en.wikipedia.org/wiki/Special:Search?search=%s&go=Article'
                       , 'wg' : 'http://de.wikipedia.org/wiki/Special:Search?search=%s&go=Artikel'
                       , 'g' : 'http://www.google.com/search?q=%s'
                       , 'so' : 'http://stackoverflow.com/search?q=%s'
