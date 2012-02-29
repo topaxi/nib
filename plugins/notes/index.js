@@ -1,9 +1,10 @@
-var Commands = require('../lib/commands')
+var Commands = require('../../lib/commands')
+  , fs       = require('fs')
 
 Commands.add('leavenote'
   , 'Stores a note for a idleing user, until he returns.'
   , function(bot) {
-    bot._notes = {}
+    readNotes(bot)
 
     // Give note to user on join
     bot.irc.on('join', printAllNotes)
@@ -20,7 +21,7 @@ Commands.add('leavenote'
         bot.say(nick, 'people left notes for you:')
 
         notes.forEach(function(note) {
-          var d         = note.time
+          var d         = new Date(note.time)
             , timestamp = d.getDate() +'.'+ (d.getMonth() + 1) + '.'
                           +' '+
                           d.getHours() +':'+ d.getMinutes()
@@ -31,7 +32,9 @@ Commands.add('leavenote'
           bot.notice(note.from, 'Note to '+ nick +' delivered!')
         })
 
-        bot._notes[nick] = []
+        delete bot._notes[nick]
+
+        saveNotes(bot)
       }
     }
   }
@@ -62,6 +65,33 @@ Commands.add('leavenote'
       bot._notes[noteTo] = [note]
     }
 
+    saveNotes(bot)
+
     bot.notice(from, 'Added note for '+ noteTo)
   }
 )
+
+function readNotes(bot) {
+  var filename = __dirname +'/'+ bot.nick +'_'+ bot.host +'.notes'
+
+  try {
+    fs.statSync(filename)
+
+    bot._notes = JSON.parse(fs.readFileSync(filename))
+  }
+  catch (e) {
+    bot._notes = {}
+  }
+}
+
+function saveNotes(bot, cb) {
+  var filename = __dirname +'/'+ bot.nick +'_'+ bot.host +'.notes'
+
+  fs.writeFile(filename, JSON.stringify(bot._notes), function(err) {
+    if (err) return cb(err)
+
+    console.log('saved notes to:', filename)
+
+    if (typeof cb == 'function') cb()
+  })
+}
