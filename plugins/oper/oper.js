@@ -10,13 +10,12 @@ module.exports = function(bot) {
     if (~opers.indexOf(nick)) op(nick)
   })
 
-  bot.irc.on('mode', function(from, b) {
-    b = b.split(' ')
 
-    if (b[0] == bot.channel && b[1] == '+o' && b[2] == bot.nick) {
-      bot.irc.names([bot.channel], function(names) {
-        names[bot.channel].filter(function(n) { return ~opers.indexOf(n) })
-                          .forEach(op)
+  bot.on('channel mode', function(p, mode, to, channel, from) {
+    if (p == '+' && mode == 'o' && to == bot.nick && channel == bot.channel) {
+      bot.irc.names([channel], function(names) {
+        names[channel].filter(function(n) { return ~opers.indexOf(n) })
+                      .forEach(op)
       })
     }
   })
