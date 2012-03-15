@@ -12,23 +12,20 @@ Commands.add('listen'
     lfm.User.getRecentTracks({'user': nick, 'limit': 1}, function(err, data) {
       if (err) return say(err)
 
-      var lnick  = /user="(.*?)"/.exec(data)
-        , track  = /<name>(.*?)<\/name>/.exec(data)
-        , artist = /<artist.*?>(.*?)<\/artist>/.exec(data)
+      var user   = data.recenttracks['@attr'].user
+        , track  = data.recenttracks.track[0].name
+        , artist = data.recenttracks.track[0].artist['#text']
 
       if (!nick || (!artist && !track)) {
         return say(nick +' was not found on last.fm')
       }
 
-      nick   = lnick[1]
-      track  = track[1].replace(/&amp;/g, '&')
-      artist = artist[1].replace(/&amp;/g, '&')
-
-      if (~data.indexOf('nowplaying="true"')) {
-        say(nick +' is currently listening to:')
+      if (data.recenttracks.track[0]['@attr'] &&
+          data.recenttracks.track[0]['@attr']['nowplaying'] == 'true') {
+        say(user +' is currently listening to:')
       }
       else {
-        say(nick +' last played track was:')
+        say(user +' last played track was:')
       }
 
       say(artist +' - '+ track)
