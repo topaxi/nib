@@ -13,27 +13,22 @@ Commands.add('listen'
       if (err) return say(err)
 
       var user   = data.recenttracks['@attr'].user
-        , track  = data.recenttracks.track
-        , artist, title
+        , track  = data.recenttracks.track[0].name
+        , artist = data.recenttracks.track[0].artist['#text']
 
-      if (!track) return say('Could not lookup latest track...')
-
-      title  = track.name
-      artist = track.artist['#text']
-
-      if (!nick || (!artist && !title)) {
+      if (!nick || (!artist && !track)) {
         return say(nick +' was not found on last.fm')
       }
 
-      if (track['@attr'] &&
-          track['@attr']['nowplaying'] == 'true') {
+      if (data.recenttracks.track[0]['@attr'] &&
+          data.recenttracks.track[0]['@attr']['nowplaying'] == 'true') {
         say(user +' is currently listening to:')
       }
       else {
         say(user +' last played track was:')
       }
 
-      say(artist +' - '+ title)
+      say(artist +' - '+ track)
     })
 
     function say(text) {
