@@ -4,9 +4,10 @@ Commands.add('seen'
   , 'Outputs the date on which the given nick was last seen.'
   , function(bot) {
     bot._seen = {}
-    bot.irc.on('part', setSeen)
-    bot.irc.on('quit', setSeen)
-    bot.irc.on('join', setSeen)
+    bot.irc.on('part',    setSeen)
+    bot.irc.on('quit',    setSeen)
+    bot.irc.on('join',    setSeen)
+    bot.irc.on('privmsg', setSeen)
 
     function setSeen(user) {
       var nick = user.split('!')[0]
