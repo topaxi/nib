@@ -6,18 +6,13 @@ Commands.add('seen'
     bot._seen = {}
     bot.irc.on('part', setSeen)
     bot.irc.on('quit', setSeen)
-
-    bot.irc.on('join', function(user) {
-      var nick = user.split('!')[0]
-
-      delete bot._seen[nick.toLowerCase()]
-    })
+    bot.irc.on('join', setSeen)
 
     function setSeen(user) {
       var nick = user.split('!')[0]
 
-      bot._seen[nick.toLowerCase()] = { 'nick':    nick
-                                      , 'time':    new Date
+      bot._seen[nick.toLowerCase()] = { 'nick': nick
+                                      , 'time': new Date
                                       }
     }
   }
@@ -38,13 +33,15 @@ Commands.add('seen'
     bot.irc.names(bot.channel, function(names) {
       names = names[bot.channel].map(function(n) { return n.toLowerCase() })
 
-      if (~names.indexOf(lnick)) {
-        say('"'+ nick +'" is in '+ bot.channel +' right now!')
-      }
-      else if (bot._seen[lnick]) {
-        var seen = bot._seen[lnick]
+      var seen = bot._seen[lnick]
 
-        say('I have "'+ seen.nick +'" last seen on '+ seen.time)
+      if (seen) {
+        if (~names.indexOf(lnick)) {
+          say('"'+ nick +'" is in '+ bot.channel +' right now, idling since: '+ seen.time)
+        }
+        else {
+          say('I have "'+ seen.nick +'" last seen on '+ seen.time)
+        }
       }
       else {
         say('I haven\'t seen "'+ nick +'"')
