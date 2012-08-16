@@ -6,7 +6,7 @@ module.exports = function(bot) {
 
   bot.irc.on('join', function(user, chan) {
     var nick = user.split('!')[0]
-      , chan = chan.split(' ')[0]
+      , chan = chan.split(' ')[0].slice(1)
 
     if (~opers.indexOf(nick)) op(nick, chan)
   })
