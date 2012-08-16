@@ -23,25 +23,29 @@ Commands.add('bofh'
     .on('error', function(err) { console.log(err) })
 
     bot.irc.on('privmsg', function(prefix, params) {
-      var from = prefix.split('!')[0]
+      var channel = params.split(' ')[0]
+        , msg     = params.split(':')[1]
+        , excuse
 
-      if (~params.indexOf('problem') ||
-          ~params.indexOf('fail')    ||
-          ~params.indexOf('down')    ||
-          ~params.indexOf('offline') ||
-          ~params.indexOf('kaputt')  ||
-          ~params.indexOf('help')) {
-        say(bot.commands, from, '')
+      if (~msg.indexOf('problem') ||
+          ~msg.indexOf('fail')    ||
+          ~msg.indexOf('down')    ||
+          ~msg.indexOf('offline') ||
+          ~msg.indexOf('kaputt')  ||
+          ~msg.indexOf('help')) {
+        excuse = getRandomBOFH()
+
+        if (excuse) bot.say(channel, excuse)
       }
     })
   }
   , function(from, to, nick) {
-    say(this, to)
+    var excuse = getRandomBOFH()
+
+    if (excuse) this.say(from, to, getRandomBOFH())
   }
 )
 
-function say(bot, from) {
-  var excuse = excuses[~~(Math.random() * (excuses.length+1))]
-
-  if (excuse) bot.say(from, excuse)
+function getRandomBOFH() {
+  return excuses[~~(Math.random() * (excuses.length+1))]
 }
