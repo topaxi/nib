@@ -9,11 +9,13 @@ Commands.add('seen'
     bot.irc.on('join',    setSeen)
     bot.irc.on('privmsg', setSeen)
 
-    function setSeen(user) {
-      var nick = user.split('!')[0]
+    function setSeen(user, params) {
+      var nick = user  .split('!')[0]
+        , chan = params.split(' ')[0]
 
-      bot._seen[nick.toLowerCase()] = { 'nick': nick
-                                      , 'time': new Date
+      bot._seen[nick.toLowerCase()] = { 'nick':    nick
+                                      , 'time':    new Date
+                                      , 'channel': chan
                                       }
     }
   }
@@ -24,24 +26,32 @@ Commands.add('seen'
       , bot   = self._bot
       , lnick = nick.toLowerCase()
 
-    if (from.toLowerCase() == lnick) {
+    /*if (from.toLowerCase() == lnick) {
       return say('Y U NO SEE YOURSELF?')
     }
-    else if (bot.nick.toLowerCase() == lnick) {
+    else */if (bot.nick.toLowerCase() == lnick) {
       return say('Behind you, a three headed monkey!')
     }
 
-    bot.irc.names(bot.channel, function(names) {
-      names = names[bot.channel].map(function(n) { return n.toLowerCase() })
+    bot.irc.names(bot.channels, function(_names) {
+      var names = {}
+      bot.channels.forEach(function(chan) {
+        _names[chan].forEach(function(n) {
+          n = n.toLowerCase()
+
+          if (names[n]) names[n].push(chan)
+          else          names[n] = [chan]
+        })
+      })
 
       var seen = bot._seen[lnick]
 
       if (seen) {
-        if (~names.indexOf(lnick)) {
-          say('"'+ nick +'" is in '+ bot.channel +' right now, idling since: '+ seen.time)
+        if (names[lnick]) {
+          say('"'+ nick +'" is in '+ names[lnick].join(', ').replace(/,\s([^,]+)$/, ' and $1') +' right now, idling since: '+ seen.time)
         }
         else {
-          say('I have "'+ seen.nick +'" last seen on '+ seen.time)
+          say('I have "'+ seen.nick +'" last seen on '+ seen.time +' in'+ seen.channel)
         }
       }
       else {
