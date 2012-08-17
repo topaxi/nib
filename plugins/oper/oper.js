@@ -8,20 +8,24 @@ module.exports = function(bot) {
     var nick = user.split('!')[0]
       , chan = chan.split(' ')[0].slice(1)
 
-    if (~opers.indexOf(nick)) op(nick, chan)
+    if (opers[chan] && ~opers[chan].indexOf(nick)) {
+      op(nick, chan)
+    }
   })
 
 
-  bot.on('channel mode', function(p, mode, to, channel, from) {
+  bot.on('channel mode', function(p, mode, to, chan, from) {
+    if (!opers[chan]) return
+
     if (p == '+' && mode == 'o' && to == bot.nick) {
-      bot.irc.names([channel], function(names) {
-        names[channel].filter(function(n) { return ~opers.indexOf(n) })
-                      .forEach(function(n) { op(n, channel) })
+      bot.irc.names([chan], function(names) {
+        names[chan].filter(function(n) { return ~opers[chan].indexOf(n) })
+                      .forEach(function(n) { op(n, chan) })
       })
     }
   })
 
-  function op(nick, channel) {
-    bot.irc.write('MODE '+ channel +' +o '+ nick)
+  function op(nick, chan) {
+    bot.irc.write('MODE '+ chan +' +o '+ nick)
   }
 }
