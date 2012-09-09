@@ -36,11 +36,12 @@ Commands.add('8ball'
             , /^should i.*\?$/i
             , /^will.*\?$/i
             , /^is.*\?$/i
-            , /^not sure if.*\?$/i
+            , /^not sure if.*$/i
             , /^are you sure.*\?$/i
             , /^sicher\?$/i
             , /^sure\?$/i
-            , new RegExp('^' + bot.nick + ':.*\\?$')
+            , new RegExp('^' + bot.nick + ':.*\\?$', 'i')
+            , new RegExp('^' + bot.nick + ',.*\\?$', 'i')
           ]
         , decoder = /^([^\s]+) :(.*)/
       bot.irc.on('privmsg', function(prefix, params) {
