@@ -19,8 +19,10 @@ module.exports = function(bot) {
 
     if (p == '+' && mode == 'o' && to == bot.nick) {
       bot.irc.names([chan], function(names) {
+        if (!names[chan]) return
+
         names[chan].filter(function(n) { return ~opers[chan].indexOf(n) })
-                      .forEach(function(n) { op(n, chan) })
+                   .forEach(function(n) { op(n, chan) })
       })
     }
   })
