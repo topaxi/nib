@@ -15,7 +15,7 @@ module.exports = function(bot) {
               , ' pushed to '
               , r.repository.name
               , ' branch '
-              , r.ref.match(/[^/]+$/)[0]
+              , r.ref.match(/[^\/]+$/)[0]
               , ':'
               ].join(''))
 
