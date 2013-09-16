@@ -36,7 +36,7 @@ Commands.add('seen'
     bot.irc.names(bot.channels, function(_names) {
       var names = {}
       bot.channels.forEach(function(chan) {
-        _names[chan].forEach(function(n) {
+        _names[chan] && _names[chan].forEach(function(n) {
           n = n.toLowerCase()
 
           if (names[n]) names[n].push(chan)
