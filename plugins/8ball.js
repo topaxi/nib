@@ -1,4 +1,4 @@
-var Commands  = require('../lib/commands')
+var Command   = require('../lib/commands').Command
   , responses = [
       'It is certain'
     , 'It is decidedly so'
@@ -22,16 +22,15 @@ var Commands  = require('../lib/commands')
     , 'Very doubtful'
   ]
 
-
-
 function decide() {
   return responses[~~(Math.random() * (responses.length+1))]
 }
 
-Commands.add('8ball'
-  , 'Helps you with finding decisions,'
-  , function(bot) {
-       var triggers = [
+module.exports = Command.extend({
+    name: '8ball'
+  , description: 'Helps you with finding decisions,'
+  , init: function(bot) {
+       this.triggers = [
             /^söui.*\?$/i
             , /^should i.*\?$/i
             , /^will.*\?$/i
@@ -43,26 +42,20 @@ Commands.add('8ball'
             , new RegExp('^' + bot.nick + ':.*\\?$', 'i')
             , new RegExp('^' + bot.nick + ',.*\\?$', 'i')
           ]
-        , decoder = /^([^\s]+) :(.*)/
-      bot.irc.on('privmsg', function(prefix, params) {
-        var match     = params.match(decoder)
-          , channel   = match[1]
-          , msg       = match[2]
-          , triggered = false
 
-        triggers.forEach(function(re) {
-          if(triggered) {
-            return
-          }
-          if (msg.match(re)) {
-            bot.say(channel, decide())
-          }
-        })
-      })
+      this.privmsg = this.privmsg.bind(this)
+
+      bot.irc.on('privmsg', this.privmsg)
     }
-  , function(from, to, nick) {
-    var response = decide()
-    this.say(from, to, response)
+  , handler: function(from, to) {
+    this._bot.reply(from, to, decide())
   }
-)
-
+  , privmsg: function(from, to, msg) {
+    if (this.triggers.some(function(re) { return msg.match(re) })) {
+      this.handler(from, to)
+    }
+  }
+  , cleanup: function(bot) {
+    bot.irc.off('privmsg', this.privmsg)
+  }
+})

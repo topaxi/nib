@@ -1,18 +1,23 @@
-var Commands = require('../lib/commands')
+var Command  = require('../lib/commands').Command
   , https    = require('https')
-  , URL      = 'https://developer.mozilla.org/en/JavaScript/Reference'
+  , BASEPATH = '/en-US/docs/Web/JavaScript/Reference'
+  , DOMAIN   = 'developer.mozilla.org'
   , cache    = {}
 
-Commands.add('jsref'
-  , 'Lookup the JavaScript reference @ http://developer.mozilla.org/'
-  , function(from, to, search) {
+function makeURL(path) {
+  return 'https://'+ DOMAIN + path
+}
+
+module.exports = Command.extend({
+    name: 'jsref'
+  , description: 'Lookup the JavaScript reference @ http://developer.mozilla.org/'
+  , handler: function(from, to, search) {
     search = search ? search.trim() : ''
 
     var self    = this
-      , bot     = self._bot
-      , lsearch = search.trim()
+      , lsearch = search
 
-    if (!search) return say(URL)
+    if (!search) return say(makeURL(BASEPATH))
 
     var parts = lsearch.split('.')
       , index = lGlobal_Objects.indexOf(parts[0].toLowerCase())
@@ -24,10 +29,10 @@ Commands.add('jsref'
       return say(URL +'/Global_Objects/'+ Global_Objects[index])
     }
 
-    var path = Global_Objects[index] +'/'+ parts[1]
-      , url  = URL +'/Global_Objects/'+ path
-      , op   = { 'host': 'developer.mozilla.org'
-               , 'path': '/en/JavaScript/Reference/Global_Objects/'+ path
+    var path = BASEPATH + '/Global_Objects/'+ Global_Objects[index] +'/'+ parts[1]
+      , url  = makeURL(path)
+      , op   = { 'host': DOMAIN
+               , 'path': path
                }
 
     if (cache[path]) return say(cache[path])
@@ -41,10 +46,10 @@ Commands.add('jsref'
     }).end()
 
     function say(text) {
-      self.say(from, to, from +': '+ text)
+      self._bot.reply(from, to, from +': '+ text)
     }
   }
-)
+})
 
 var Global_Objects = [ /* Constructors */
                        'Array'
@@ -56,6 +61,8 @@ var Global_Objects = [ /* Constructors */
                      , 'Object'
                      , 'RegExp'
                      , 'String'
+                     , 'Proxy'
+                     , 'ParallelArray'
                        /* E4X Constructors */
                      //, 'Namespace'
                      //, 'QName'
@@ -63,6 +70,7 @@ var Global_Objects = [ /* Constructors */
                      //, 'XMLList'
                        /* Typed Array Constructors */
                      , 'ArrayBuffer'
+                     , 'DataView'
                      , 'Float32Array'
                      , 'Float64Array'
                      , 'Int16Array'
@@ -72,6 +80,10 @@ var Global_Objects = [ /* Constructors */
                      , 'Uint32Array'
                      , 'Uint8Array'
                      //, 'Uint8ClampedArray'
+                       /* Internationalization constructors */
+                     , 'Collator'
+                     , 'DateTimeFormat'
+                     , 'NumberFormat'
                        /* Errors */
                      , 'Error'
                      , 'EvalError'
@@ -95,10 +107,12 @@ var Global_Objects = [ /* Constructors */
                      //, 'uneval'
                        /* Other */
                      , 'Infinity'
+                     , 'Intl'
                      , 'JSON'
                      , 'Math'
                      , 'NaN'
                      , 'undefined'
+                     , 'null'
                      ]
 
 // Create lower case map

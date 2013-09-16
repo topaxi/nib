@@ -1,22 +1,27 @@
-var Commands = require('../lib/commands')
+var Command  = require('../lib/commands').Command
   , https    = require('https')
-  , URL      = 'https://developer.mozilla.org/en/CSS'
+  , BASEPATH = '/en-US/docs/Web/CSS/'
+  , DOMAIN   = 'developer.mozilla.org'
   , cache    = {}
 
-Commands.add('cssref'
-  , 'Lookup the CSS reference @ http://developer.mozilla.org/'
-  , function(from, to, search) {
+function makeURL(path) {
+  return 'https://'+ DOMAIN + path
+}
+
+module.exports = Command.extend({
+    name: 'cssref'
+  , description: 'Lookup the CSS reference @ http://developer.mozilla.org/'
+  , handler: function(from, to, search) {
     search = search ? search.trim() : ''
 
     var self = this
-      , bot  = self._bot
-      , path = search.trim()
+      , path = search
 
-    if (!search) return say(URL +'/CSS_Reference')
+    if (!search) return say(makeURL('/CSS_Reference'))
 
-    var url  = URL +'/'+ path
-      , op   = { 'host': 'developer.mozilla.org'
-               , 'path': '/en/CSS/'+ path
+    var url  = makeURL(BASEPATH + path)
+      , op   = { 'host': DOMAIN
+               , 'path': BASEPATH + path
                }
 
     if (cache[path]) return say(cache[path])
@@ -30,7 +35,7 @@ Commands.add('cssref'
     }).end()
 
     function say(text) {
-      self.say(from, to, from +': '+ text)
+      self._bot.reply(from, to, from +': '+ text)
     }
   }
-)
+})

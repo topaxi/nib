@@ -1,11 +1,12 @@
-var lfm      = require('./lastfm')
-  , Commands = require('../../lib/commands')
+var lfm     = require('./lastfm')
+  , Command = require('../../lib/commands').Command
 
 lfm.setAPIKey('967ce1901a718b229e7795a485666a1e')
 
-Commands.add('listen'
-  , 'Looks up the given last.fm user\'s currently playing track.'
-  , function(from, to, nick) {
+module.exports = Command.extend({
+    name: 'listen'
+  , description: 'Looks up the given last.fm user\'s currently playing track.'
+  , handler: function(from, to, nick) {
     var self = this
       , bot  = self._bot
 
@@ -41,7 +42,7 @@ Commands.add('listen'
     })
 
     function say(text) {
-      self.say(from, to, text)
+      bot.reply(from, to, text)
     }
   }
-)
+})

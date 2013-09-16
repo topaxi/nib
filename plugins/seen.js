@@ -1,25 +1,31 @@
-var Commands = require('../lib/commands')
+var Command = require('../lib/commands').Command
 
-Commands.add('seen'
-  , 'Outputs the date on which the given nick was last seen.'
-  , function(bot) {
-    bot._seen = {}
-    bot.irc.on('part',    setSeen)
-    bot.irc.on('quit',    setSeen)
-    bot.irc.on('join',    setSeen)
-    bot.irc.on('privmsg', setSeen)
+module.exports = Command.extend({
+    name: 'seen'
+  , description: 'Outputs the date on which the given nick was last seen.'
+  , init: function(bot) {
+    this._seen   = {}
+    this.setSeen = this.setSeen.bind(this)
 
-    function setSeen(user, params) {
-      var nick = user  .split('!')[0]
-        , chan = params.split(' ')[0]
-
-      bot._seen[nick.toLowerCase()] = { 'nick':    nick
-                                      , 'time':    new Date
-                                      , 'channel': chan
-                                      }
-    }
+    bot.irc.on('part',    this.setSeen)
+    bot.irc.on('quit',    this.setSeen)
+    bot.irc.on('join',    this.setSeen)
+    bot.irc.on('privmsg', this.setSeen)
   }
-  , function(from, to, nick) {
+  , cleanup: function(bot) {
+    bot.irc.off('part',    this.setSeen)
+    bot.irc.off('quit',    this.setSeen)
+    bot.irc.off('join',    this.setSeen)
+    bot.irc.off('privmsg', this.setSeen)
+  }
+  , setSeen: function(nick, chan) {
+    this._seen[nick.toLowerCase()] = { 'nick':    nick
+                                     , 'time':    new Date
+                                       // chan may be the botnick in private messages...
+                                     , 'channel': chan == this._bot.nick ? null : chan
+                                     }
+  }
+  , handler: function(from, to, nick) {
     if (!nick || !nick.trim()) return
 
     var self  = this
@@ -51,7 +57,13 @@ Commands.add('seen'
           say('"'+ nick +'" is in '+ names[lnick].join(', ').replace(/,\s([^,]+)$/, ' and $1') +' right now, idling since: '+ seen.time)
         }
         else {
-          say('I have "'+ seen.nick +'" last seen on '+ seen.time +' in'+ seen.channel)
+          var msg = 'I have "'+ seen.nick +'" last seen on '+ seen.time
+
+          if (seen.channel) {
+            msg += ' in'+ seen.channel
+          }
+
+          say(msg)
         }
       }
       else {
@@ -60,7 +72,7 @@ Commands.add('seen'
     })
 
     function say(text) {
-      self.say(from, to, from +': '+ text)
+      bot.reply(from, to, from +': '+ text)
     }
   }
-)
+})

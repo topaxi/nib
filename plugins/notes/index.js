@@ -1,44 +1,22 @@
-var Commands = require('../../lib/commands')
-  , fs       = require('fs')
+var Command = require('../../lib/commands').Command
+  , fs      = require('fs')
 
-Commands.add('leavenote'
-  , 'Stores a note for a idleing user, until he returns.'
-  , function(bot) {
-    readNotes(bot)
+module.exports = Command.extend({
+    name: 'leavenote'
+  , description: 'Stores a note for a idleing user, until he returns.'
+  , init: function(bot) {
+    this.printAllNotes = this.printAllNotes.bind(this)
+    this.readNotes()
 
     // Give note to user on join
-    bot.irc.on('join', printAllNotes)
+    bot.irc.on('join', this.printAllNotes)
 
     // Or if user writes to the channel
     // future version could maybe check idle status
-    bot.irc.on('privmsg', printAllNotes)
-
-    function printAllNotes(user) {
-      var nick  = user.split('!')[0]
-        , notes = bot._notes[nick]
-
-      if (notes && notes.length > 0) {
-        bot.say(nick, 'people left notes for you:')
-
-        notes.forEach(function(note) {
-          var d         = new Date(note.time)
-            , timestamp = d.getDate() +'.'+ (d.getMonth() + 1) + '.'
-                          +' '+
-                          d.getHours() +':'+ d.getMinutes()
-
-          bot.say(nick,
-            'from '+ note.from +', added '+ timestamp +': '+ note.note)
-
-          bot.notice(note.from, 'Note to '+ nick +' delivered!')
-        })
-
-        delete bot._notes[nick]
-
-        saveNotes(bot)
-      }
-    }
+    bot.irc.on('privmsg', this.printAllNotes)
   }
-  , function(from, to, message) {
+  , handler: function(from, to, message) {
+    console.log(arguments, message)
     if (!message) {
       return this._bot.notice(from, 'No message given!')
     }
@@ -58,40 +36,63 @@ Commands.add('leavenote'
            , 'time' : new Date
            }
 
-    if (bot._notes[noteTo]) {
-      bot._notes[noteTo].push(note)
+    if (this._notes[noteTo]) {
+      this._notes[noteTo].push(note)
     }
     else {
-      bot._notes[noteTo] = [note]
+      this._notes[noteTo] = [note]
     }
 
-    saveNotes(bot)
+    this.saveNotes()
 
     bot.notice(from, 'Added note for '+ noteTo)
   }
-)
+  , readNotes: function() {
+    var filename = __dirname +'/'+ this._bot.nick +'_'+ this._bot.host +'.notes'
 
-function readNotes(bot) {
-  var filename = __dirname +'/'+ bot.nick +'_'+ bot.host +'.notes'
+    try {
+      fs.statSync(filename)
 
-  try {
-    fs.statSync(filename)
-
-    bot._notes = JSON.parse(fs.readFileSync(filename))
+      this._notes = JSON.parse(fs.readFileSync(filename))
+    }
+    catch (e) {
+      console.error(e)
+      this._notes = {}
+    }
   }
-  catch (e) {
-    bot._notes = {}
+  , saveNotes: function(cb) {
+    var filename = __dirname +'/'+ this._bot.nick +'_'+ this._bot.host +'.notes'
+
+    fs.writeFile(filename, JSON.stringify(this._notes), function(err) {
+      if (err) return cb(err)
+
+      console.log('saved notes to:', filename)
+
+      if (typeof cb == 'function') cb()
+    })
   }
-}
+  , printAllNotes: function(user) {
+    var nick  = user.split('!')[0]
+      , notes = this._notes[nick]
 
-function saveNotes(bot, cb) {
-  var filename = __dirname +'/'+ bot.nick +'_'+ bot.host +'.notes'
+    if (notes && notes.length > 0) {
+      this._bot.say(nick, 'people left notes for you:')
 
-  fs.writeFile(filename, JSON.stringify(bot._notes), function(err) {
-    if (err) return cb(err)
+      notes.forEach(function(note) {
+        var d         = new Date(note.time)
+          , timestamp = d.getDate() +'.'+ (d.getMonth() + 1) + '.'
+                        +' '+
+                        d.getHours() +':'+ d.getMinutes()
 
-    console.log('saved notes to:', filename)
+        this._bot.say(nick,
+          'from '+ note.from +', added '+ timestamp +': '+ note.note)
 
-    if (typeof cb == 'function') cb()
-  })
-}
+        this._bot.notice(note.from, 'Note to '+ nick +' delivered!')
+      }, this)
+
+      delete this._notes[nick]
+
+      this.saveNotes()
+    }
+  }
+})

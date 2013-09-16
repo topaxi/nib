@@ -1,51 +1,63 @@
-var Commands = require('../lib/commands')
-  , http     = require('http')
-  , excuses  = []
+var http    = require('http')
+  , Command = require('../lib/commands').Command
 
-Commands.add('bofh'
-  , 'Gives you an useful excuse for various computer problems,'
-   +' taken from http://pgl.yoyo.org/bofh/excuses.txt :)'
-  , function(bot) {
-    http.get({ 'host': 'pgl.yoyo.org'
-             , 'port': 80
-             , 'path': '/bofh/excuses.txt'}, function(res) {
-      var data = ''
+module.exports = Command.extend({
+    name: 'bofh'
+  , description: 'Gives you an useful excuse for various computer problems, '
+               + 'taken from http://pgl.yoyo.org/bofh/excuses.txt :)'
+  , triggerWords: [ 'problem'
+                  , 'fail'
+                  , 'down'
+                  , 'offline'
+                  , 'kaputt'
+                  , 'help'
+                  ]
+  , init: function(bot) {
+      var self = this
 
-      res.on('data', function(chunk) { data += chunk })
-      res.on('end', function() {
-        excuses = excuses.concat(data.split('\n').map(function(val) {
-          val = val.trim()
+      self.privmsg = self.privmsg.bind(self)
+      self.excuses = []
 
-          if (val) return val
-        }))
+      http.get({ 'host': 'pgl.yoyo.org'
+               , 'port': 80
+               , 'path': '/bofh/excuses.txt' }, function(res) {
+        var data = ''
+
+        res.on('data', function(chunk) { data += chunk })
+        res.on('end', function() {
+          self.excuses = self.excuses.concat(data.split('\n').map(function(val) {
+            val = val.trim()
+
+            if (val) return val
+          }))
+
+          if (!self.excuses.length) {
+            return bot.commands.remove('bofh')
+          }
+
+          bot.irc.on('privmsg', self.privmsg)
+        })
       })
-    })
-    .on('error', function(err) { console.log(err) })
+      .on('error', function(err) {
+        bot.commands.remove('bofh')
 
-    bot.irc.on('privmsg', function(prefix, params) {
-      var channel = params.split(' ')[0]
-        , msg     = params.split(':')[1]
-        , excuse
-
-      if (~msg.indexOf('problem') ||
-          ~msg.indexOf('fail')    ||
-          ~msg.indexOf('down')    ||
-          ~msg.indexOf('offline') ||
-          ~msg.indexOf('kaputt')  ||
-          ~msg.indexOf('help')) {
-        excuse = getRandomBOFH()
-
-        if (excuse) bot.say(channel, excuse)
+        self.error(err)
+      })
+    }
+  , privmsg: function(from, to, msg) {
+      if (this.triggerWords.some(function(word) { return ~msg.indexOf(word) })) {
+        this.handler(from, to)
       }
-    })
-  }
-  , function(from, to, nick) {
-    var excuse = getRandomBOFH()
+    }
+  , cleanup: function(bot) {
+      bot.irc.off('privmsg', this.privmsg)
+    }
+  , handler: function(from, to) {
+      var excuse = this.getRandomBOFH()
 
-    if (excuse) this.say(from, to, getRandomBOFH())
-  }
-)
-
-function getRandomBOFH() {
-  return excuses[~~(Math.random() * (excuses.length+1))]
-}
+      this._bot.reply(from, to, excuse)
+    }
+  , getRandomBOFH: function() {
+      return this.excuses[~~(Math.random() * (this.excuses.length+1))]
+    }
+})
