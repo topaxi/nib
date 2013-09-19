@@ -28,7 +28,7 @@ function decide() {
 
 module.exports = Command.extend({
     name: '8ball'
-  , description: 'Helps you with finding decisions,'
+  , info: 'Helps you with finding decisions,'
   , init: function(bot) {
        this.triggers = [
             /^söui.*\?$/i

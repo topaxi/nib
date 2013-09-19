@@ -2,6 +2,7 @@ var Command = require('../lib/commands').Command
 
 module.exports = Command.extend({
     name: 'seen'
+  , info: 'Channel NSA'
   , description: 'Outputs the date on which the given nick was last seen.'
   , init: function(bot) {
     this._seen   = {}

@@ -3,6 +3,7 @@ var http    = require('http')
 
 module.exports = Command.extend({
     name: 'bofh'
+  , info: 'Useful computer problem excuses'
   , description: 'Gives you an useful excuse for various computer problems, '
                + 'taken from http://pgl.yoyo.org/bofh/excuses.txt :)'
   , triggerWords: [ 'problem'

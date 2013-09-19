@@ -5,6 +5,7 @@ lfm.setAPIKey('967ce1901a718b229e7795a485666a1e')
 
 module.exports = Command.extend({
     name: 'listen'
+  , info: 'Currently listening on last.fm'
   , description: 'Looks up the given last.fm user\'s currently playing track.'
   , handler: function(from, to, nick) {
     var self = this

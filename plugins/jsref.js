@@ -10,6 +10,7 @@ function makeURL(path) {
 
 module.exports = Command.extend({
     name: 'jsref'
+  , info: 'Lookup JavaScript references'
   , description: 'Lookup the JavaScript reference @ http://developer.mozilla.org/'
   , handler: function(from, to, search) {
     search = search ? search.trim() : ''

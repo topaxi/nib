@@ -3,7 +3,9 @@ var Command = require('../../lib/commands').Command
 
 module.exports = Command.extend({
     name: 'leavenote'
-  , description: 'Stores a note for a idleing user, until he returns.'
+  , info: 'Stores a note for a idleing user.'
+  , description: 'Stores a note for an offline or idleing user, '
+                +'until he returns.'
   , init: function(bot) {
     this.printAllNotes = this.printAllNotes.bind(this)
     this.readNotes()

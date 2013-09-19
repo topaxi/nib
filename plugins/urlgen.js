@@ -2,7 +2,16 @@ var Command = require('../lib/commands').Command
 
 module.exports = Command.extend({
     name: 'urlgen'
-  , description: 'Generates urls for different websites/web services'
+  , info: 'Generates urls for different websites/web services'
+  , description: 'Generates urls for different websites/web services\n'
+                +'- we | english wikipedia\n'
+                +'- wg | german wikipedia\n'
+                +'-  g | google\n'
+                +'- so | stackoverflow\n'
+                +'- wa | wolframalpha\n'
+                +'-  t | dict.cc\n'
+                +'- yt | youtube\n'
+                +'-  a | developer.android.com'
   , handler: function(from, to, search) {
     search = search ? search.trim() : ''
 
