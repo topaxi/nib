@@ -18,7 +18,6 @@ module.exports = Command.extend({
     bot.irc.on('privmsg', this.printAllNotes)
   }
   , handler: function(from, to, message) {
-    console.log(arguments, message)
     if (!message) {
       return this._bot.notice(from, 'No message given!')
     }
