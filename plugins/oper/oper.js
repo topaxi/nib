@@ -12,7 +12,6 @@ module.exports = function(bot) {
     }
   })
 
-
   bot.on('channel mode', function(p, mode, to, chan, from) {
     if (p == '+' && mode == 'o' && to == bot.nick) {
       var opers = require('./opers.json')
