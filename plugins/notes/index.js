@@ -49,7 +49,7 @@ module.exports = Command.extend({
     bot.notice(from, 'Added note for '+ noteTo)
   }
   , readNotes: function() {
-    var filename = __dirname +'/'+ this._bot.nick +'_'+ this._bot.host +'.notes'
+    var filename = this.file('notes.json')
 
     try {
       fs.statSync(filename)
@@ -62,7 +62,7 @@ module.exports = Command.extend({
     }
   }
   , saveNotes: function(cb) {
-    var filename = __dirname +'/'+ this._bot.nick +'_'+ this._bot.host +'.notes'
+    var filename = this.file('notes.json')
 
     fs.writeFile(filename, JSON.stringify(this._notes), function(err) {
       if (err) return cb(err)
