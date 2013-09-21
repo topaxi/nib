@@ -17,6 +17,10 @@ module.exports = Command.extend({
     // future version could maybe check idle status
     bot.irc.on('privmsg', this.printAllNotes)
   }
+  , cleanup: function(bot) {
+    bot.irc.off('join', this.printAllNotes)
+    bot.irc.off('privmsg', this.printAllNotes)
+  }
   , handler: function(from, to, message) {
     if (!message) {
       return this._bot.notice(from, 'No message given!')
