@@ -51,7 +51,7 @@ module.exports = Command.extend({
         })
       })
 
-      var seen = bot._seen[lnick]
+      var seen = self._seen[lnick]
 
       if (seen) {
         if (names[lnick]) {
