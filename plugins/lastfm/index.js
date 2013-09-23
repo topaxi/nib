@@ -8,32 +8,30 @@ module.exports = Command.extend({
   , info: 'Currently listening on last.fm'
   , description: 'Looks up the given last.fm user\'s currently playing track.'
   , handler: function(from, to, nick) {
-    var self = this
-      , bot  = self._bot
+    var bot = this._bot
 
     lfm.User.getRecentTracks({'user': nick, 'limit': 1}, function(err, data) {
       if (err) return say(err)
 
-      var user   = data.recenttracks['@attr'] && data.recenttracks['@attr'].user
-        , track  = data.recenttracks.track
+      var recent = data.recenttracks
+        , user   = recent['@attr'] && recent['@attr'].user
+        , track  = recent.track
         , artist, title
 
       if (!user) {
         return say(nick +' was not found on last.fm')
       }
 
-      if (!track) return say('Could not lookup latest track...')
-
       if (Array.isArray(track)) {
         track = track[0]
       }
 
+      if (!track || !track.name || !track.artist) {
+        return say('Could not lookup latest track...')
+      }
+
       title  = track.name
       artist = track.artist['#text']
-
-      if (!nick || (!artist && !title)) {
-        return say(nick +' was not found on last.fm')
-      }
 
       if (track['@attr'] &&
           track['@attr']['nowplaying'] == 'true') {
