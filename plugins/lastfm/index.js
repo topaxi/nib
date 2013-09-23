@@ -14,9 +14,13 @@ module.exports = Command.extend({
     lfm.User.getRecentTracks({'user': nick, 'limit': 1}, function(err, data) {
       if (err) return say(err)
 
-      var user   = data.recenttracks['@attr'].user
+      var user   = data.recenttracks['@attr'] && data.recenttracks['@attr'].user
         , track  = data.recenttracks.track
         , artist, title
+
+      if (!user) {
+        return say(nick +' was not found on last.fm')
+      }
 
       if (!track) return say('Could not lookup latest track...')
 
