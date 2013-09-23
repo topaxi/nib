@@ -61,7 +61,7 @@ module.exports = Command.extend({
           var msg = 'I have "'+ seen.nick +'" last seen on '+ seen.time
 
           if (seen.channel) {
-            msg += ' in'+ seen.channel
+            msg += ' in '+ seen.channel
           }
 
           say(msg)
