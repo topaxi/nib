@@ -34,7 +34,7 @@ module.exports = function(bot, options) {
     var url
 
     function dest() {
-      return options.dest +'/'+ to +'/'+ dir() +'/'+ file() +'_by_'+ from
+      return options.dest +'/'+ to +'/'+ dir() +'/'+ file() +'_by_'+ from + path.extname(url)
     }
 
     if (allowedToLog(to) && (url = getURL(msg))) {
