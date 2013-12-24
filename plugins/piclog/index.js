@@ -1,12 +1,20 @@
-var fs     = require('fs')
-  , path   = require('path')
-  , mkdirp = require('mkdirp')
+var fs      = require('fs')
+  , path    = require('path')
+  , mkdirp  = require('mkdirp')
+  , request = require('request')
 
-function get(url, callback) {
-  var http    = url.startsWith('https') ? require('https') : require('http')
-    , request = http.get(url, callback)
+function downloadImage(uri, file) {
+  request.head(uri, function(err, res, body){
+    if (err) return console.err(err)
 
-  request.on('error', console.error)
+    if (res.headers['content-type'].startsWith('image/')) {
+      mkdirp(path.dirname(file), function(err) {
+        if (err) return console.err(err)
+
+        request(uri).pipe(fs.createWriteStream(file))
+      })
+    }
+  })
 }
 
 if (!String.prototype.startsWith) {
@@ -38,15 +46,7 @@ module.exports = function(bot, options) {
     }
 
     if (allowedToLog(to) && (url = getURL(msg))) {
-      get(url, function(res) {
-        if (res.headers['content-type'].startsWith('image/')) {
-          mkdirp(path.dirname(dest()), function(err) {
-            if (err) return console.error(err)
-
-            res.pipe(fs.createWriteStream(dest()))
-          })
-        }
-      })
+      downloadImage(url, dest())
     }
   })
 }
