@@ -38,11 +38,11 @@ module.exports = function(bot, options) {
     return r && r[0]
   }
 
-  bot.irc.on('privmsg', function(from, to, msg) {
+  bot.irc.on('privmsg', function(from, channel, msg) {
     var url
 
     function dest() {
-      return options.dest +'/'+ to +'/'+ dir() +'/'+ file() +'_by_'+ from + path.extname(url)
+      return options.dest +'/'+ channel.slice(1) +'/'+ dir() +'/'+ file() +'_by_'+ from + path.extname(url)
     }
 
     if (allowedToLog(to) && (url = getURL(msg))) {
