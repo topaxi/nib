@@ -45,7 +45,7 @@ module.exports = function(bot, options) {
       return options.dest +'/'+ channel.slice(1) +'/'+ dir() +'/'+ file() +'_by_'+ from + path.extname(url)
     }
 
-    if (allowedToLog(to) && (url = getURL(msg))) {
+    if (allowedToLog(channel) && (url = getURL(msg))) {
       downloadImage(url, dest())
     }
   })
