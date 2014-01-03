@@ -54,9 +54,13 @@ module.exports = function(bot, options) {
 function dir() {
   var d = new Date
 
-  return d.getFullYear() +''+ (d.getMonth() + 1)
+  return d.getFullYear() +''+ zeropad((d.getMonth() + 1), 2)
 }
 
 function file() {
   return Date.now()
+}
+
+function zeropad(n, d) {
+  for (n = ''+ (n >>> 0); n.length < d;) n = '0'+ n; return n
 }
