@@ -9,7 +9,7 @@ function downloadImage(uri, file) {
 
     if (res.headers['content-type'].startsWith('image/')) {
       mkdirp(path.dirname(file), function(err) {
-        if (err) return console.err(err)
+        if (err) return console.error(err)
 
         request(uri).pipe(fs.createWriteStream(file))
       })
