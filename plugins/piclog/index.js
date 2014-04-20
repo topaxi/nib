@@ -2,10 +2,31 @@ var fs      = require('fs')
   , path    = require('path')
   , mkdirp  = require('mkdirp')
   , request = require('request')
+  , htmlparser = require("htmlparser")
+  , select = require('soupselect').select
 
 function downloadImage(uri, file) {
   request.head(uri, function(err, res, body){
     if (err) return console.err(err)
+
+    if (uri.match(/^https?:\/\/imgur.com/)) {
+      request(uri, function(err, res, body) {
+        var handler = new htmlparser.DefaultHandler(function (error, dom) {
+          return
+        })
+
+        var parser = new htmlparser.Parser(handler);
+        parser.parseComplete(body);
+
+        images = select(handler.dom, '#image img')
+        if (images.length > 0) {
+          url = 'http:' + images[0].attribs.src
+
+          downloadImage(url, file + path.extname(url))
+        }
+      })
+      return
+    }
 
     if (res.headers['content-type'].startsWith('image/')) {
       mkdirp(path.dirname(file), function(err) {
