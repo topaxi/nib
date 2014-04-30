@@ -2,45 +2,53 @@ var fs      = require('fs')
   , path    = require('path')
   , mkdirp  = require('mkdirp')
   , request = require('request')
-  , htmlparser = require("htmlparser")
-  , select = require('soupselect').select
+  , cheerio = require('cheerio')
+
+var selector = { '9gag.com':   '.badge-item-img'
+               , 'imgur.com':  '#image img'
+               }
 
 function downloadImage(uri, file) {
   request.head(uri, function(err, res, body){
-    if (err) return console.err(err)
+    if (err) return console.error(err)
 
-    if (uri.match(/^https?:\/\/imgur.com/)) {
-      request(uri, function(err, res, body) {
-        var handler = new htmlparser.DefaultHandler(function (error, dom) {
-          return
-        })
-
-        var parser = new htmlparser.Parser(handler);
-        parser.parseComplete(body);
-
-        images = select(handler.dom, '#image img')
-        if (images.length > 0) {
-          url = 'http:' + images[0].attribs.src
-
-          downloadImage(url, file + path.extname(url))
-        }
-      })
-      return
-    }
-
-    if (res.headers['content-type'].startsWith('image/')) {
+    if (res.headers['content-type'].contains('image/')) {
       mkdirp(path.dirname(file), function(err) {
         if (err) return console.error(err)
 
         request(uri).pipe(fs.createWriteStream(file))
       })
     }
+    else if (res.headers['content-type'].contains('text/html')) {
+      var urlObj = url.parse(uri)
+        , sel    = selector[urlObj.host]
+
+      if (sel) request(uri, function(err, res, body) {
+        if (err || res.statusCode != 200) return
+
+        var $   = cheerio.load(body)
+          , $el = $(sel)
+          , uri = $el.attr('src')
+
+        if (uri) {
+          if (uri.startsWith('//')) uri = 'http:'+ uri
+
+          downloadImage(uri, file)
+        }
+      })
+    }
   })
+}
+
+if (!String.prototype.contains) {
+  String.prototype.contains = function(s) {
+    return !!~this.indexOf(s)
+  }
 }
 
 if (!String.prototype.startsWith) {
   String.prototype.startsWith = function(s) {
-    return !this.indexOf(s)
+    return this.indexOf(s) === 0
   }
 }
 
