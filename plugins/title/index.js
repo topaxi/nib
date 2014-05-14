@@ -1,7 +1,6 @@
 /* jshint asi:true */
 
-var url     = require('url')
-  , request = require('request')
+var request = require('request')
   , cheerio = require('cheerio')
 
 function getPage(url, callback) {
@@ -43,7 +42,6 @@ module.exports = function(bot, options) {
     var imgur = /https?:\/\/(?:www\.)?imgur\.com\/gallery\/[^\s]+/.exec(msg)
 
     if (imgur) {
-      console.log("imgur")
       return extractImgurTitle(imgur[0], function(title) {
         bot.say('Imgur: ' + title)
       })
