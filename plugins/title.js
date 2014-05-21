@@ -43,14 +43,14 @@ module.exports = function(bot, options) {
 
     if (imgur) {
       return extractImgurTitle(imgur[0], function(title) {
-        bot.say('Imgur: ' + title)
+        bot.say(channel, 'Imgur: ' + title)
       })
     }
     
     var youtube = /https?:\/\/(?:www\.)?youtube.com\/watch\?[^\s]+/.exec(msg)
     if (youtube) {
       return extractYoutubeTitle(youtube[0], function(title) {
-        bot.say('Youtube: ' + title)
+        bot.say(channel, 'Youtube: ' + title)
       })
     }
 
