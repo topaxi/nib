@@ -1,4 +1,5 @@
 var fs      = require('fs')
+  , url     = require('url')
   , path    = require('path')
   , mkdirp  = require('mkdirp')
   , request = require('request')
