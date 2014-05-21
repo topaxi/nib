@@ -2,45 +2,35 @@ var http    = require('http')
   , Command = require('../lib/commands').Command
 
 module.exports = Command.extend({
-    name: 'bofh'
+    name: 'kspr'
   , info: 'Useful computer problem excuses'
   , description: 'Gives you an useful excuse for various computer problems, '
                + 'taken from http://pgl.yoyo.org/bofh/excuses.txt :)'
-  , triggerWords: [ 'problem'
-                  , 'fail'
-                  , 'down'
-                  , 'offline'
-                  , 'kaputt'
-                  , 'help'
+  , triggerWords: [ 'apple'
+                  , 'windows'
+                  , 'verkauf'
+                  , 'verkaufen'
+                  , 'kaufen'
+                  , 'kauf'
+                  , 'business'
+                  , 'markt'
+                  , 'deal'
                   ]
   , init: function(bot) {
       var self = this
 
       self.privmsg = self.privmsg.bind(self)
-      self.excuses = []
+      self.excuses = [ 'Due dilligence erhöhen'
+                       'Einander den Ball zuspielen'
+                       'Mehr Synergien erschaffen'
+                       'Mehr Business aquirieren'
+                       'Weniger Wintel-Umgebungen verkaufen'
+                       ''
+                     ]
 
-      http.get({ 'host': 'pgl.yoyo.org'
-               , 'port': 80
-               , 'path': '/bofh/excuses.txt' }, function(res) {
-        var data = ''
-
-        res.on('data', function(chunk) { data += chunk })
-        res.on('end', function() {
-          self.excuses = self.excuses.concat(data.split('\n').map(function(val) {
-            val = val.trim()
-
-            if (val) return val
-          }))
-
-          if (!self.excuses.length) {
-            return bot.commands.remove('bofh')
-          }
-
-          bot.irc.on('privmsg', self.privmsg)
-        })
-      })
+ 
       .on('error', function(err) {
-        bot.commands.remove('bofh')
+        bot.commands.remove('kspr')
 
         self.error(err)
       })
@@ -54,11 +44,11 @@ module.exports = Command.extend({
       bot.irc.off('privmsg', this.privmsg)
     }
   , handler: function(from, to) {
-      var excuse = this.getRandomBOFH()
+      var excuse = this.getRandomKSPR()
 
       this._bot.reply(from, to, excuse)
     }
-  , getRandomBOFH: function() {
+  , getRandomKSPR: function() {
       return this.excuses[~~(Math.random() * (this.excuses.length+1))]
     }
 })
