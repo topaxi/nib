@@ -39,6 +39,10 @@ function extractYoutubeTitle(match, callback) {
 
 module.exports = function(bot, options) {
   bot.irc.on('privmsg', function(from, channel, msg) {
+    if (/^\s*!/.exec(msg)) {
+      return
+    }
+
     var imgur = /https?:\/\/(?:www\.)?imgur\.com\/gallery\/[^\s]+/.exec(msg)
 
     if (imgur) {
