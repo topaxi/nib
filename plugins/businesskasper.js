@@ -25,7 +25,20 @@ module.exports = Command.extend({
                        'Mehr Synergien erschaffen'
                        'Mehr Business aquirieren'
                        'Weniger Wintel-Umgebungen verkaufen'
-                       ''
+                       'Total Cost of ownership senken'
+                       'Mehr Fokus auf Teamplayer'
+                       'Mindset neu setzen für besseres Business triggering'
+                       'Mehr Just In Time Delivery'
+                       'Timelines besser ausreizen'
+                       'Deadlines einhalten'
+                       'Profit-orientierte Knowledgebase erstellen'
+                       'Proaktive Modularbauteile ersetzen'
+                       'Vollkonfigurierbare, asynchrone Software einsetzen'
+                       'Fortgeschrittene, objektorientierte Preisstruktur'
+                       'Synergien besser nutzen für die Erschaffung von neuen Businessmöglichkeiten'
+                       'Networking betreiben zur Erhöhung der Marktdominanz'
+                       'Projekte mit due dilligence verknüpfen'
+                       'Optimales HR-Management nutzen'
                      ]
 
  
