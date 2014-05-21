@@ -22,7 +22,7 @@ function getPage(url, callback) {
 function extractImgurTitle(match, callback) {
   getPage(match, function(body) {
     var $ = cheerio.load(body)
-    var title = $('h2#image-title').text().trim()
+    var title = $('#image-title').text().trim()
 
     callback(title)
   })
@@ -31,7 +31,7 @@ function extractImgurTitle(match, callback) {
 function extractYoutubeTitle(match, callback) {
   getPage(match, function(body) {
     var $ = cheerio.load(body)
-    var title = $('span#eow-title').text().trim()
+    var title = $('#eow-title').text().trim()
 
     callback(title)
   })
