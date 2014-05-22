@@ -38,8 +38,9 @@ module.exports = Command.extend( {
     name: 'aare'
   , info: 'Aare temperature'
   , description: 'Shows the temperature of the river aare in berne'
-  , init: function(bot) {
-    bot.irc.on('privmsg', function(from, channel, msg) {
+  , handler:  function(from, channel, msg) {
+    var self = this
+
       getTemp(function(info) {
         console.dir(info)
 
@@ -49,9 +50,8 @@ module.exports = Command.extend( {
         else {
           var predict = "aber si wird schins cheuter";
         }
-        bot.say(channel, "D'aare isch im Momänt öppe " + info.temp + " warm " + predict)
+        self._bot.say(channel, "D'aare isch im Momänt öppe " + info.temp + " warm " + predict)
       })
-    })
   }
 })
 
