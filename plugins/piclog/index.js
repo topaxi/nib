@@ -5,8 +5,9 @@ var fs      = require('fs')
   , request = require('request')
   , cheerio = require('cheerio')
 
-var selector = { '9gag.com':   '.badge-item-img'
-               , 'imgur.com':  '#image img'
+var selector = { '9gag.com':     '.badge-item-img'
+               , 'imgur.com':    '#image img'
+               , 'pr0gramm.com': '.item-image'
                }
 
 function downloadImage(uri, file) {
