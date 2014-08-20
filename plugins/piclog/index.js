@@ -13,6 +13,8 @@ function downloadImage(uri, file) {
   request.head(uri, function(err, res, body){
     if (err) return console.error(err)
 
+    if (!res.headers['content-type']) return
+
     if (res.headers['content-type'].contains('image/') ||
         res.headers['content-type'].contains('video/')) {
       mkdirp(path.dirname(file), function(err) {
