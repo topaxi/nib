@@ -56,6 +56,10 @@ module.exports = Command.extend({
     }
   }
   , op: function(nick, channel) {
-    this._bot.irc.write('MODE '+ channel +' +o '+ nick)
+    var opers = require('./opers.json')
+
+    if (opers[channel] && ~opers[channel].indexOf(nick)) {
+      this._bot.irc.write('MODE '+ channel +' +o '+ nick)
+    }
   }
 })
