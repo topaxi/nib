@@ -39,7 +39,7 @@ module.exports = Command.extend({
     }
   }
   , handler: function(from, to, msg) {
-    this.op(from, to == this._bot.nick && msg.trim() || to)
+    this.op(to == this._bot.nick && msg.trim() || from, to)
   }
   , op: function(channel, nick) {
     var opers = require('./opers.json')
