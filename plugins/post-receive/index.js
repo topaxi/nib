@@ -21,15 +21,13 @@ module.exports = function(bot) {
 
       bot.say(r.compare)
 
-      for (var i = 0, l = r.commits.length; i < l; ++i) {
-        var commit = r.commits[i]
-
+      r.commits.forEach(function(commit) {
         bot.say([ '- '
                 , commit.author.username
                 , ': '
                 , commit.message.replace(/\n+/g, ' ')
                 ].join(''))
-      }
+      })
     })
   })
 
