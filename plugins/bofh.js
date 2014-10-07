@@ -12,6 +12,7 @@ module.exports = Command.extend({
                   , 'offline'
                   , 'kaputt'
                   , 'help'
+                  , 'parallels'
                   ]
   , init: function(bot) {
       var self = this
