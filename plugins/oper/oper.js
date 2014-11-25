@@ -6,9 +6,9 @@ var Command = require('../../lib/commands').Command
 module.exports = Command.extend({
     name: 'op'
   , info: 'Channel oper'
-  , description: 'Channel oper plugin\n'
-                 +'- !op                  | Op yourself in the current channel\n'
-                 +'- /msg me !op #channel | Op yourself in the given channel'
+  , description: 'Channel oper plugin\n'+
+                 '- !op                  | Op yourself in the current channel\n'+
+                 '- /msg me !op #channel | Op yourself in the given channel'
   , init: function(bot, options) {
     this.onJoin        = this.onJoin.bind(this)
     this.onChannelMode = this.onChannelMode.bind(this)
@@ -21,13 +21,11 @@ module.exports = Command.extend({
     bot.irc.off('join', this.onJoin)
   }
   , onJoin: function(user, chan) {
-    var opers = require('./opers.json')
-      , nick = user.split('!')[0]
-      , chan = chan.split(' ')[0].slice(1)
+    var nick = user.split('!')[0]
 
-    if (opers[chan] && ~opers[chan].indexOf(nick)) {
-      this.op(nick, chan)
-    }
+    chan = chan.split(' ')[0].slice(1)
+
+    this.op(chan, nick)
   }
   , onChannelMode: function(p, mode, to, chan, from) {
     if (p == '+' && mode == 'o' && to == this._bot.nick) {
@@ -36,26 +34,18 @@ module.exports = Command.extend({
       if (!opers[chan]) return
 
       this._bot.irc.names([chan], function(names) {
-        if (!names[chan].length) return
-
-        names[chan].filter(function(n) { return ~opers[chan].indexOf(n) })
-                   .forEach(function(n) { this.op(n, chan) }, this)
+        names[chan].forEach(this.op.bind(this, chan))
       }.bind(this))
     }
   }
   , handler: function(from, to, msg) {
-    msg = msg.trim()
-
-    if (to == this._bot.nick && msg) {
-      if (~this._bot.channels.indexOf(msg)) {
-        this.op(from, msg)
-      }
-    }
-    else {
-      this.op(from, to)
-    }
+    this.op(to == this._bot.nick && msg.trim() || to, from)
   }
-  , op: function(nick, channel) {
-    this._bot.irc.write('MODE '+ channel +' +o '+ nick)
+  , op: function(channel, nick) {
+    var opers = require('./opers.json')
+
+    if (opers[channel] && ~opers[channel].indexOf(nick)) {
+      this._bot.irc.write('MODE '+ channel +' +o '+ nick)
+    }
   }
 })

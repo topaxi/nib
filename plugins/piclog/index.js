@@ -5,15 +5,19 @@ var fs      = require('fs')
   , request = require('request')
   , cheerio = require('cheerio')
 
-var selector = { '9gag.com':   '.badge-item-img'
-               , 'imgur.com':  '#image img'
+var selector = { '9gag.com':     '.badge-item-img'
+               , 'imgur.com':    '#image img'
+               , 'pr0gramm.com': '.item-image'
                }
 
 function downloadImage(uri, file) {
   request.head(uri, function(err, res, body){
     if (err) return console.error(err)
 
-    if (res.headers['content-type'].contains('image/')) {
+    if (!res.headers['content-type']) return
+
+    if (res.headers['content-type'].contains('image/') ||
+        res.headers['content-type'].contains('video/')) {
       mkdirp(path.dirname(file), function(err) {
         if (err) return console.error(err)
 

@@ -12,6 +12,7 @@ module.exports = Command.extend({
                   , 'offline'
                   , 'kaputt'
                   , 'help'
+                  , 'parallels'
                   ]
   , init: function(bot) {
       var self = this
@@ -46,6 +47,8 @@ module.exports = Command.extend({
       })
     }
   , privmsg: function(from, to, msg) {
+      msg = msg.toLowerCase()
+
       if (this.triggerWords.some(function(word) { return ~msg.indexOf(word) })) {
         this.handler(from, to)
       }
