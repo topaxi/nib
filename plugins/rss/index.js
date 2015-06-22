@@ -38,21 +38,26 @@ function getRssFeed(name, url, filter, handler, saver)  {
   feedparser.on('end', function() {
     var newItems = filter(name, items)
 
-    for (var i in newItems) {
-      handler(name, newItems[i].title, newItems[i].link)
+    if (newItems.length != items.length) {
+      // let's not spam the channel if we're reading
+      // the feed for the first time
+
+      for (var i in newItems) {
+        handler(name, newItems[i].title, newItems[i].link)
+      }
     }
 
     if (newItems.length) {
-    saver(name, newItems)
+      saver(name, newItems)
     }
   })
 }
 
 
-function feed(name, url, bot, options) {
+function feed(feed, bot) {
 
   function handler(name, title, url) {
-    bot.say(options && options.channels || bot.channels, name + ': ' + title + ' ' + url)
+    bot.say(feed.channels || bot.channels, feed.name + ': ' + title + ' ' + url)
   }
 
   function filter(name, items) {
@@ -84,7 +89,10 @@ function feed(name, url, bot, options) {
       itemGuids.push(items[i].guid)
     }
 
-    var currentGuids = JSON.parse(fs.readFileSync(filename))
+    var currentGuids = []
+    if (fs.exists(filename)) {
+      var currentGuids = JSON.parse(fs.readFileSync(filename))
+    }
 
     fs.writeFile(filename, JSON.stringify(currentGuids.concat(itemGuids)), function(err) {
       if (err) return cb(err)
@@ -96,14 +104,23 @@ function feed(name, url, bot, options) {
 
   }
 
-  getRssFeed(name, url, filter, handler, saver)
+  getRssFeed(feed.name, feed.url, filter, handler, saver)
 }
 
 
 module.exports = function(bot, options) {
+  var feeds = options.feeds
+  var stepper = 0
+
   var interval = setInterval(function() {
-    feed('hackernews', 'https://news.ycombinator.com/rss', bot, options)
-  }, 1000 * 60)
+      var rssFeed = feeds[stepper]
+
+      feed(rssFeed, bot)
+
+      // rotate
+      stepper = (stepper + 1) % feeds.length
+
+  }, options.interval)
 
   bot.on('quit', function() {
     clearInterval(interval)
