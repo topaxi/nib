@@ -47,7 +47,7 @@ function getRssFeed(name, url, filter, handler, saver)  {
       }
     }
 
-    if (newItems.legth > 0) {
+    if (newItems.length > 0) {
       saver(name, newItems)
     }
   })
@@ -63,6 +63,9 @@ function feed(feed, bot) {
   function filter(name, items) {
     var filename = bot.file(name + '_items.json')
 
+    if (!fs.existsSync(filename)) {
+      return items
+    }
 
     try {
       fs.statSync(filename)
