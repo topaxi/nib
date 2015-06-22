@@ -47,7 +47,7 @@ function getRssFeed(name, url, filter, handler, saver)  {
       }
     }
 
-    if (newItems.length) {
+    if (newItems.legth > 0) {
       saver(name, newItems)
     }
   })
@@ -63,12 +63,14 @@ function feed(feed, bot) {
   function filter(name, items) {
     var filename = bot.file(name + '_items.json')
 
+
     try {
       fs.statSync(filename)
 
       var oldItems = JSON.parse(fs.readFileSync(filename))
+
       var newItems = items.filter(function(item) {
-        return oldItems.indexOf(item.guid) <= -1
+        return oldItems.indexOf(item.guid) == -1
       })
 
       return newItems
@@ -81,26 +83,26 @@ function feed(feed, bot) {
   }
 
   function saver(name, items) {
-    console.log("Saving items")
     var filename = bot.file(name + '_items.json')
 
     var itemGuids = []
+
     for (var i in items) {
       itemGuids.push(items[i].guid)
     }
 
     var currentGuids = []
-    if (fs.exists(filename)) {
-      var currentGuids = JSON.parse(fs.readFileSync(filename))
+    if (fs.existsSync(filename)) {
+      currentGuids = JSON.parse(fs.readFileSync(filename))
     }
 
-    fs.writeFile(filename, JSON.stringify(currentGuids.concat(itemGuids)), function(err) {
-      if (err) return cb(err)
-
-      console.log('saved stories to:', filename)
-
-      if (typeof cb == 'function') cb()
-    })
+    var result = currentGuids.concat(itemGuids)
+    try {
+      fs.writeFileSync(filename, JSON.stringify(result))
+    }
+    catch (e) {
+      console.error(e)
+    }
 
   }
 
