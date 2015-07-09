@@ -13,6 +13,7 @@ module.exports = Command.extend({
                   , 'kaputt'
                   , 'help'
                   , 'parallels'
+                  , 'odin'
                   ]
   , init: function(bot) {
       var self = this
