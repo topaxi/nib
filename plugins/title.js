@@ -51,7 +51,7 @@ module.exports = function(bot, options) {
       })
     }
     
-    var youtube = /https?:\/\/(?:www\.)?youtube.com\/watch\?[^\s]+/.exec(msg)
+    var youtube = /https?:\/\/(?:www\.)?i(?:youtube.com|youtu.be)\/(?:v\/|embed\/|watch(?:\?v=|\/))?[a-zA-Z0-9-]+/.exec(msg)
     if (youtube) {
       return extractYoutubeTitle(youtube[0], function(title) {
         bot.say(channel, 'Youtube: ' + title)
