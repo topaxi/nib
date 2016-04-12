@@ -37,6 +37,15 @@ function extractYoutubeTitle(match, callback) {
   })
 }
 
+function extractGithubTitle(match, callback) {
+  getPage(match, function(body) {
+    var $ = cheerio.load(body)
+    var title = $('.span meta[itemprop="about"]').text().trim()
+
+    callback(title)
+  })
+}
+
 module.exports = function(bot, options) {
   bot.irc.on('privmsg', function(from, channel, msg) {
     if (/^\s*!/.exec(msg)) {
@@ -50,7 +59,7 @@ module.exports = function(bot, options) {
         bot.say(channel, 'Imgur: ' + title)
       })
     }
-    
+
     var youtube = /https?:\/\/(?:www\.)?i(?:youtube.com|youtu.be)\/(?:v\/|embed\/|watch(?:\?v=|\/))?[a-zA-Z0-9-]+/.exec(msg)
     if (youtube) {
       return extractYoutubeTitle(youtube[0], function(title) {
@@ -58,6 +67,12 @@ module.exports = function(bot, options) {
       })
     }
 
+    var github = /https?:\/\/(?:www\.)?github\.com\/[a-z]{3,99}\/[a-z]{3,99}\/?/.exec(msg)
+    if (github) {
+      return extractGithubTitle(github[0], function(title) {
+        bot.say(channel, 'GitHub: ' + title)
+      })
+    }
   })
 }
 
