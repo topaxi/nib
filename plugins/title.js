@@ -40,7 +40,7 @@ function extractYoutubeTitle(match, callback) {
 function extractGithubTitle(match, callback) {
   getPage(match, function(body) {
     var $ = cheerio.load(body)
-    var title = $('.span meta[itemprop="about"]').text().trim()
+    var title = $('.repository-meta-content > span:nth-child(1)').text().trim()
 
     callback(title)
   })
