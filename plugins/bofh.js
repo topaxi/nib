@@ -14,6 +14,7 @@ module.exports = Command.extend({
                   , 'help'
                   , 'parallels'
                   , 'odin'
+                  , 'oracle'
                   ]
   , init: function(bot) {
       var self = this
