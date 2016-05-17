@@ -5,29 +5,32 @@ var Command = require('../lib/commands').Command
   , cheerio = require('cheerio')
 
 function getTemp(callback) {
-  request('http://www.aaremarzili.info', function(err, res, body) {
+  request('https://aaremarzili.ch/rest/open/wasserdatencurrent', function(err, res, body) {
     if (err) {
       console.err(res.headers)
       return console.error(err)
     }
 
-    if (res.statusCode != 200 || res.headers['content-type'].indexOf('text/html') == -1)  {
+    if (res.statusCode != 200 || res.headers['content-type'].indexOf('application/json') == -1) {
       console.log(err, res.statusCode)
       return
     }
 
-    var $ = cheerio.load(body)
-    var temp = $('td.temperaturvalue').text().trim()
+    var aare_current = JSON.parse(body)
+    var temp = aare_current.measureValueTemperature
+    var temp_before = aare_current.measureValueTemperature
 
     console.log(temp)
 
     var direction = '';
-    var dirImg = $('td.hintergrundblau img').attr('src')
-    if (/up\.gif$/.exec(dirImg)) {
+    if (temp_before < temp) {
       direction = 'up';
     }
-    else {
+    else if (temp_before > temp) {
       direction = 'down';
+    }
+    else {
+      direction = 'stable'
     }
 
     callback( {temp: temp, direction: direction})
@@ -47,8 +50,11 @@ module.exports = Command.extend( {
         if (info.direction == 'up') {
           var predict = "u si wird schins wermer";
         }
-        else {
+        else if (info.direction == 'down') {
           var predict = "aber si wird schins cheuter";
+        }
+        else {
+          var predict = "u si blibt schins glich";
         }
         self._bot.say(channel, "D'aare isch im Momänt öppe " + info.temp + " warm " + predict)
       })
