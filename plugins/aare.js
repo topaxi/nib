@@ -9,8 +9,7 @@ var AARE_API_URL = 'https://aaremarzili.ch/rest/open/wasserdatencurrent'
 function getTemp(callback) {
   request(AARE_API_URL, function(err, res, body) {
     if (err) {
-      console.err(res.headers)
-      return console.error(err)
+      return callback(err)
     }
 
     if (res.statusCode !== 200 ||
@@ -33,7 +32,7 @@ function getTemp(callback) {
       direction = 'stable'
     }
 
-    callback( {temp: temp, direction: direction})
+    callback(null, { temp: temp, direction: direction })
   })
 }
 
@@ -44,7 +43,11 @@ module.exports = Command.extend( {
   , handler:  function(from, channel, msg) {
     var self = this
 
-      getTemp(function(info) {
+      getTemp(function(err, info) {
+        if (err) {
+          return
+        }
+
         if (info.direction === 'up') {
           var predict = 'u si wird schins wermer'
         }
