@@ -43,22 +43,24 @@ module.exports = Command.extend( {
   , handler:  function(from, channel) {
     var self = this
 
-      getTemp(function(err, info) {
-        if (err) {
-          return
-        }
+    getTemp(function(err, info) {
+      if (err) {
+        return
+      }
 
-        if (info.direction === 'up') {
-          var predict = 'u si wird schins wermer'
-        }
-        else if (info.direction === 'down') {
-          var predict = 'aber si wird schins cheuter'
-        }
-        else {
-          var predict = 'u si blibt schins glich'
-        }
-        self._bot.reply(from, channel, 'D\'aare isch im Momänt öppe ' + info.temp + ' warm ' + predict)
-      })
+      if (info.direction === 'up') {
+        var predict = 'u si wird schins wermer'
+      }
+      else if (info.direction === 'down') {
+        var predict = 'aber si wird schins cheuter'
+      }
+      else {
+        var predict = 'u si blibt schins glich'
+      }
+      self._bot.reply(from, channel,
+        'D\'aare isch im Momänt öppe ' + info.temp + ' warm ' + predict
+      )
+    })
   }
 })
 
