@@ -11,7 +11,8 @@ function getTemp(callback) {
       return console.error(err)
     }
 
-    if (res.statusCode != 200 || res.headers['content-type'].indexOf('application/json') == -1) {
+    if (res.statusCode !== 200 ||
+        res.headers['content-type'].indexOf('application/json') === -1) {
       return
     }
 
@@ -42,10 +43,10 @@ module.exports = Command.extend( {
     var self = this
 
       getTemp(function(info) {
-        if (info.direction == 'up') {
+        if (info.direction === 'up') {
           var predict = 'u si wird schins wermer';
         }
-        else if (info.direction == 'down') {
+        else if (info.direction === 'down') {
           var predict = 'aber si wird schins cheuter';
         }
         else {
