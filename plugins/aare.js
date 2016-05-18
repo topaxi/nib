@@ -12,15 +12,12 @@ function getTemp(callback) {
     }
 
     if (res.statusCode != 200 || res.headers['content-type'].indexOf('application/json') == -1) {
-      console.log(err, res.statusCode)
       return
     }
 
     var aare_current = JSON.parse(body)
     var temp = aare_current.measureValueTemperature
     var temp_before = aare_current.measureValueTemperature
-
-    console.log(temp)
 
     var direction = '';
     if (temp_before < temp) {
@@ -45,8 +42,6 @@ module.exports = Command.extend( {
     var self = this
 
       getTemp(function(info) {
-        console.dir(info)
-
         if (info.direction == 'up') {
           var predict = "u si wird schins wermer";
         }
