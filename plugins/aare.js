@@ -38,7 +38,7 @@ function getTemp(callback) {
   })
 }
 
-module.exports = Command.extend( {
+module.exports = Command.extend({
     name: 'aare'
   , info: 'Aare temperature'
   , description: 'Shows the temperature of the river aare in berne'
