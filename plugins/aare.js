@@ -20,7 +20,7 @@ function getTemp(callback) {
 
     var aareCurrent = JSON.parse(body)
     var temp = aareCurrent.measureValueTemperature
-    var tempBefore = aareCurrent.measureValueTemperature
+    var tempBefore = aareCurrent.measureValueTemperatureBefore
 
     var direction = ''
     if (tempBefore < temp) {
