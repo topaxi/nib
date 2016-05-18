@@ -19,22 +19,7 @@ function getTemp(callback) {
       return
     }
 
-    var aareCurrent = JSON.parse(body)
-    var temp = aareCurrent.measureValueTemperature
-    var tempBefore = aareCurrent.measureValueTemperatureBefore
-
-    var direction = ''
-    if (tempBefore < temp) {
-      direction = 'up'
-    }
-    else if (tempBefore > temp) {
-      direction = 'down'
-    }
-    else {
-      direction = 'stable'
-    }
-
-    callback(null, { temp: temp, direction: direction })
+    callback(null, JSON.parse(body))
   })
 }
 
@@ -45,23 +30,27 @@ module.exports = Command.extend({
   , handler:  function(from, channel) {
     var bot = this._bot
 
-    getTemp(function(err, info) {
+    getTemp(function(err, temp) {
       if (err) {
         return
       }
 
-      if (info.direction === 'up') {
-        var predict = 'u si wird schins wermer'
+      var tempFuture = temp.measureValueTemperatureFuture
+      var tempNow = temp.measureValueTemperature
+      var predict
+
+      if (tempFuture > tempNow) {
+        predict = 'u si wird schins wermer'
       }
-      else if (info.direction === 'down') {
-        var predict = 'aber si wird schins cheuter'
+      else if (tempFuture < tempNow) {
+        predict = 'aber si wird schins cheuter'
       }
       else {
-        var predict = 'u si blibt schins glich'
+        predict = 'u si blibt schins glich'
       }
 
       bot.reply(from, channel,
-        'D\'aare isch im Momänt öppe ' + info.temp + ' warm ' + predict
+        'D\'aare isch im Momänt öppe ' + tempNow + ' warm ' + predict
       )
     })
   }
