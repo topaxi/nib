@@ -20,12 +20,12 @@ function getTemp(callback) {
     var temp = aare_current.measureValueTemperature
     var temp_before = aare_current.measureValueTemperature
 
-    var direction = '';
+    var direction = ''
     if (temp_before < temp) {
-      direction = 'up';
+      direction = 'up'
     }
     else if (temp_before > temp) {
-      direction = 'down';
+      direction = 'down'
     }
     else {
       direction = 'stable'
@@ -44,13 +44,13 @@ module.exports = Command.extend( {
 
       getTemp(function(info) {
         if (info.direction === 'up') {
-          var predict = 'u si wird schins wermer';
+          var predict = 'u si wird schins wermer'
         }
         else if (info.direction === 'down') {
-          var predict = 'aber si wird schins cheuter';
+          var predict = 'aber si wird schins cheuter'
         }
         else {
-          var predict = 'u si blibt schins glich';
+          var predict = 'u si blibt schins glich'
         }
         self._bot.say(channel, 'D\'aare isch im Momänt öppe ' + info.temp + ' warm ' + predict)
       })
