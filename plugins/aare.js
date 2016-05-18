@@ -2,7 +2,6 @@
 
 var Command = require('../lib/commands').Command
   , request = require('request')
-  , cheerio = require('cheerio')
 
 var AARE_API_URL = 'https://aaremarzili.ch/rest/open/wasserdatencurrent'
 
