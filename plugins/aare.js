@@ -41,7 +41,7 @@ module.exports = Command.extend( {
   , info: 'Aare temperature'
   , description: 'Shows the temperature of the river aare in berne'
   , handler:  function(from, channel) {
-    var self = this
+    var bot = this._bot
 
     getTemp(function(err, info) {
       if (err) {
@@ -57,7 +57,8 @@ module.exports = Command.extend( {
       else {
         var predict = 'u si blibt schins glich'
       }
-      self._bot.reply(from, channel,
+
+      bot.reply(from, channel,
         'D\'aare isch im Momänt öppe ' + info.temp + ' warm ' + predict
       )
     })
