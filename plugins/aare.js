@@ -9,7 +9,9 @@ var AARE_API_URL = 'https://aaremarzili.ch/rest/open/wasserdatencurrent'
 function getTemp(callback) {
   request(AARE_API_URL, function(err, res, body) {
     if (err) {
-      return callback(err)
+      callback(err)
+
+      return
     }
 
     if (res.statusCode !== 200 ||
