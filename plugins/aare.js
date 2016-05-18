@@ -50,7 +50,7 @@ module.exports = Command.extend({
       }
 
       bot.reply(from, channel,
-        'D\'aare isch im Momänt öppe ' + tempNow + ' warm ' + predict
+        'D\'aare isch im Momänt öppe ' + tempNow + '° warm ' + predict
       )
     })
   }
