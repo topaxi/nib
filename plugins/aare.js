@@ -16,15 +16,15 @@ function getTemp(callback) {
       return
     }
 
-    var aare_current = JSON.parse(body)
-    var temp = aare_current.measureValueTemperature
-    var temp_before = aare_current.measureValueTemperature
+    var aareCurrent = JSON.parse(body)
+    var temp = aareCurrent.measureValueTemperature
+    var tempBefore = aareCurrent.measureValueTemperature
 
     var direction = ''
-    if (temp_before < temp) {
+    if (tempBefore < temp) {
       direction = 'up'
     }
-    else if (temp_before > temp) {
+    else if (tempBefore > temp) {
       direction = 'down'
     }
     else {
