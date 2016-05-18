@@ -15,6 +15,7 @@ function getTemp(callback) {
 
     if (res.statusCode !== 200 ||
         res.headers['content-type'].indexOf('application/json') === -1) {
+      callback(new Error('Response error'))
       return
     }
 
