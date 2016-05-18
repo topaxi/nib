@@ -43,15 +43,15 @@ module.exports = Command.extend( {
 
       getTemp(function(info) {
         if (info.direction == 'up') {
-          var predict = "u si wird schins wermer";
+          var predict = 'u si wird schins wermer';
         }
         else if (info.direction == 'down') {
-          var predict = "aber si wird schins cheuter";
+          var predict = 'aber si wird schins cheuter';
         }
         else {
-          var predict = "u si blibt schins glich";
+          var predict = 'u si blibt schins glich';
         }
-        self._bot.say(channel, "D'aare isch im Momänt öppe " + info.temp + " warm " + predict)
+        self._bot.say(channel, 'D\'aare isch im Momänt öppe ' + info.temp + ' warm ' + predict)
       })
   }
 })
