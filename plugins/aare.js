@@ -4,8 +4,10 @@ var Command = require('../lib/commands').Command
   , request = require('request')
   , cheerio = require('cheerio')
 
+var AARE_API_URL = 'https://aaremarzili.ch/rest/open/wasserdatencurrent'
+
 function getTemp(callback) {
-  request('https://aaremarzili.ch/rest/open/wasserdatencurrent', function(err, res, body) {
+  request(AARE_API_URL, function(err, res, body) {
     if (err) {
       console.err(res.headers)
       return console.error(err)
