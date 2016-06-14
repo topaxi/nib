@@ -3,10 +3,17 @@
 var Command = require('../lib/commands').Command
   , request = require('request')
 
-var AARE_API_URL = 'https://aaremarzili.ch/rest/open/wasserdatencurrent'
+var AARE_API_URL = 'https://aaremarzili-api.herokuapp.com/rest/open/wasserdatencurrent'
+var AARE_ORIGIN_URL = 'https://aaremarzili.ch/'
 
 function getTemp(callback) {
-  request(AARE_API_URL, function(err, res, body) {
+  var rqOptions = {
+    url: AARE_API_URL,
+    headers: {
+      'Origin': AARE_ORIGIN_URL,
+    }
+  }
+  request(rqOptions, function(err, res, body) {
     if (err) {
       callback(err)
 
