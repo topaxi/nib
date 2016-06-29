@@ -83,7 +83,7 @@ module.exports = function(bot, options) {
       })
     }
 
-    var youtube = /https?:\/\/(?:www\.)?(?:youtube.com\/(?:v\/|embed\/|watch(?:\?v=|\/))|youtu.be\/)[a-zA-Z0-9-]+/.exec(msg)
+    var youtube = /https?:\/\/(?:www\.)?(?:youtube.com\/(?:v\/|embed\/|watch(?:\?v=|\/))|youtu.be\/)[a-zA-Z0-9-_]+/.exec(msg)
     if (youtube) {
       return extractYoutubeTitle(youtube[0], function(title) {
         bot.say(channel, 'Youtube: ' + title)
