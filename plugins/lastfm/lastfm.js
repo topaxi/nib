@@ -53,7 +53,7 @@ function call(className, method, options, callback) {
 }
 
 lastfm.create = function(className) {
-  return Proxy.create({
+  return new Proxy({}, {
     get: function(proxy, propName) {
       return function() {
         return call(className, propName, arguments[0], arguments[1])
