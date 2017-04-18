@@ -1,3 +1,5 @@
+var fs = require('fs')
+var path = require('path')
 var Command = require('../../lib/commands').Command
 
 /**
@@ -29,7 +31,7 @@ module.exports = Command.extend({
   }
   , onChannelMode: function(p, mode, to, chan, from) {
     if (p == '+' && mode == 'o' && to == this._bot.nick) {
-      var opers = require('./opers.json')
+      var opers = this.getOpers()
 
       if (!opers[chan]) return
 
@@ -42,10 +44,15 @@ module.exports = Command.extend({
     this.op(to == this._bot.nick && msg.trim() || to, from)
   }
   , op: function(channel, nick) {
-    var opers = require('./opers.json')
+    var opers = this.getOpers()
 
     if (opers[channel] && ~opers[channel].indexOf(nick)) {
       this._bot.irc.write('MODE '+ channel +' +o '+ nick)
     }
+  }
+  , getOpers() {
+    var opersFile = path.join(__dirname, 'opers.json')
+
+    return JSON.parse(fs.readFileSync(opersFile, 'utf8'))
   }
 })
