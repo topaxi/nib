@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 var Nib    = require('../index').Nib
-  , config = { 'host':    'irc.freenode.org'
+  , config = { 'host':    'localhost'
              , 'port':    6667
              , 'ssl':     false
-             , 'channel': '#bern'
-             , 'nick':    'nibller'
+             , 'channel': '#test'
+             , 'nick':    'nib'
              , 'timeout': 1000 * 60 * 10
-             , 'plugins': [ 'timetable'
+             , 'plugins': [ 'seen'
                           ]
              }
 
