@@ -52,9 +52,9 @@ printArray = function (bot, from, to, arr, start, delay) {
 }
 
 query = function (host, path, argsObject, callback) {
-    if (!host) throw 'host must be set!';
-    if (!path) throw 'path must be set!';
-    if (!argsObject) throw 'argsObject must be set!';
+    if (!host) callback(null, 'host must be set!');
+    if (!path) callback(null, 'path must be set!');
+    if (!argsObject) callback(null, 'argsObject must be set!');
 
     var url = path;
     if (argsObject) {
@@ -79,7 +79,7 @@ query = function (host, path, argsObject, callback) {
 }
 
 getDepartures = function (stationName, limit, callback) {
-    if (!stationName) throw 'stationName must be set!';
+    if (!stationName) callback(null, 'stationName must be set!');
 
     var args = { station: stationName };
     if (limit)
