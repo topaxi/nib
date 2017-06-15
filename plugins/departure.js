@@ -50,6 +50,8 @@ printArray = function(bot, from, to, arr, start, delay) {
 
   bot.reply(from, to, arr[start])
   start++
+  if (start % 5 == 0 && delay < 1800)
+    delay += (delay / 2);
   setTimeout(function() {
     printArray(bot, from, to, arr, start, delay)
   }, delay)
