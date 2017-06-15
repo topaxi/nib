@@ -15,7 +15,7 @@ module.exports = Command.extend({
       + 'Use limit to read a max number of scheduled departure timestamps.\n'
       + 'Default value for limit is 4, max. is 10\n'
       + 'Results are printed line-by-line and sent using private messages.\n'
-  , handler: function (from, to, args) {
+  , handler: function(from, to, args) {
     var bot = this._bot
 
     if (!args) {
@@ -30,7 +30,7 @@ module.exports = Command.extend({
     if (limit > 10)
       limit = 10
 
-    getDepartures(stationName, limit, function (timetable, err) {
+    getDepartures(stationName, limit, function(err, timetable) {
       if (err) {
         bot.reply(from, from, 'Ooops: ' + err)
         return
@@ -41,64 +41,64 @@ module.exports = Command.extend({
   }
 })
 
-printArray = function (bot, from, to, arr, start, delay) {
+printArray = function(bot, from, to, arr, start, delay) {
   if (start >= arr.length)
     return
 
   bot.reply(from, to, arr[start])
   start++
-  setTimeout(function () { printArray(bot, from, to, arr, start, delay) }, delay)
+  setTimeout(function() { printArray(bot, from, to, arr, start, delay) }, delay)
 }
 
-query = function (host, path, argsObject, callback) {
-  if (!host) callback(null, 'host must be set!')
-  if (!path) callback(null, 'path must be set!')
-  if (!argsObject) callback(null, 'argsObject must be set!')
+query = function(host, path, argsObject, callback) {
+  if (!host) callback(new Error('host must be set!'))
+  if (!path) callback(new Error('path must be set!'))
+  if (!argsObject) callback(new Error('argsObject must be set!'))
 
   var url = path
   if (argsObject) {
     url += ('?' + querystring.stringify(argsObject))
   }
 
-  console.log('Query: ' + url)
   var data = ''
-  var req = http.request({ hostname: host, path: url, method: 'GET', port: 80 }, function (resp) {
-    resp.on('data', function (chunk) {
+  var req = http.request({ hostname: host, path: url, method: 'GET', port: 80 }, function(resp) {
+    resp.on('data', function(chunk) {
       data += chunk
     });
-    resp.on('end', function () {
+    resp.on('end', function() {
       try {
         var o = JSON.parse(data);
-        if (callback) callback(o)
+        callback(null, o)
       }
-      catch (e) {
-        if (callback) callback(null, 'Failed to parse json data: ' + e)
+      catch (err) {
+        callback(err)
       }
     });
   });
-  req.on('error', function (err) {
-    if (callback) callback(null, err)
+  req.on('error', function(err) {
+    callback(err)
   });
   req.end();
 }
 
-getDepartures = function (stationName, limit, callback) {
-  if (!stationName) callback(null, 'stationName must be set!')
+getDepartures = function(stationName, limit, callback) {
+  if (!stationName)
+    callback(new Error('stationName must be set!'))
 
   var args = { station: stationName }
   if (limit)
     args.limit = limit
 
-  query(hostname, stationPath, args, function (data, err) {
+  query(hostname, stationPath, args, function(err, data) {
 
     if (err) {
-      if (callback) callback(null, err);
+      callback(err);
       return
     }
 
     if (!data.station) {
       timetable.push('No matching station for \'' + stationName + '\' found')
-      if (callback) callback(timetable)
+      callback(null, timetable)
       return
     }
 
@@ -109,7 +109,8 @@ getDepartures = function (stationName, limit, callback) {
       timetable.push('No departures found for station \'' + exactStationName + '\'')
     }
     else {
-      timetable.push('Next ' + data.stationboard.length + ' departures from ' + exactStationName + ':')
+      timetable.push('Next ' + data.stationboard.length
+        + ' timestamps with a scheduled course from ' + exactStationName + ':')
       for (var i = 0; i < data.stationboard.length; i++) {
         var journey = data.stationboard[i]
         var dep = new Date(journey.stop.departure)
@@ -119,6 +120,6 @@ getDepartures = function (stationName, limit, callback) {
         timetable.push(msg)
       }
     }
-    if (callback) callback(timetable)
+    callback(null, timetable)
   });
 }
