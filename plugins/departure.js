@@ -10,11 +10,11 @@ module.exports = Command.extend({
   name: 'departure'
   , info: 'Timetable departures'
   , description:
-     'Fetches the next scheduled departures from a public transport station.\n'
-      + 'Syntax: departure <stationName> [limit]\n'
-      + 'Use limit to read a max number of scheduled departure timestamps.\n'
-      + 'Default value for limit is 4, max. is 10\n'
-      + 'Results are printed line-by-line and sent using private messages.\n'
+    'Fetches the next scheduled departures from a public transport station.\n'
+     + 'Syntax: departure <stationName> [limit]\n'
+     + 'Use limit to read a max number of scheduled departure timestamps.\n'
+     + 'Default value for limit is 4, max. is 10\n'
+     + 'Results are printed line-by-line and sent using private messages.\n'
   , handler: function(from, to, args) {
     var bot = this._bot
 
@@ -47,7 +47,9 @@ printArray = function(bot, from, to, arr, start, delay) {
 
   bot.reply(from, to, arr[start])
   start++
-  setTimeout(function() { printArray(bot, from, to, arr, start, delay) }, delay)
+  setTimeout(function() {
+    printArray(bot, from, to, arr, start, delay)
+  }, delay)
 }
 
 query = function(host, path, argsObject, callback) {
@@ -59,7 +61,8 @@ query = function(host, path, argsObject, callback) {
   url += ('?' + querystring.stringify(argsObject))
 
   var data = ''
-  var req = http.request({ hostname: host, path: url, method: 'GET', port: 80 }, function(resp) {
+  var opts = { hostname: host, path: url, method: 'GET', port: 80 }
+  var req = http.request(opts, function(resp) {
     resp.on('data', function(chunk) {
       data += chunk
     });
@@ -104,7 +107,8 @@ getDepartures = function(stationName, limit, callback) {
 
     var exactStationName = data.station.name
     if (!data.stationboard || data.stationboard.length == 0) {
-      timetable.push('No departures found for station \'' + exactStationName + '\'')
+      timetable.push('No departures found for station \''
+        + exactStationName + '\'')
     }
     else {
       timetable.push('Next ' + data.stationboard.length
@@ -112,7 +116,8 @@ getDepartures = function(stationName, limit, callback) {
       for (var i = 0; i < data.stationboard.length; i++) {
         var journey = data.stationboard[i]
         var dep = new Date(journey.stop.departure)
-        var msg = journey.name + ' to ' + journey.to + ' at ' + dep.toLocaleTimeString()
+        var msg = journey.name + ' to ' + journey.to + ' at '
+          + dep.toLocaleTimeString()
         if (journey.stop.platform)
           msg += ' from platform ' + journey.stop.platform
         timetable.push(msg)
