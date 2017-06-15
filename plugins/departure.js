@@ -102,13 +102,13 @@ getDepartures = function(stationName, limit, callback) {
       return
     }
 
+    var timetable = []
+
     if (!data.station) {
       timetable.push('No matching station for \'' + stationName + '\' found')
       callback(null, timetable)
       return
     }
-
-    var timetable = []
 
     var exactStationName = data.station.name
     if (!data.stationboard || data.stationboard.length == 0) {
