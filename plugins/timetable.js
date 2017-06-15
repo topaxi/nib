@@ -15,7 +15,7 @@ module.exports = Command.extend({
                 + '  Prints the next departures from passed stationName.\n'
                 + '  limit can be a positive integer, to limit number of timestamps\n'
                 + '  (not departures) to return. Defaults to 4, max value is 10.\n'
-                + '  Departures will be printed with a private message, to prevent channel flooding'
+                + '  Departures will be printed with a private messages to prevent channel flooding'
   , handler:  function(from, to, args) {
     var bot = this._bot;
     
@@ -31,7 +31,13 @@ module.exports = Command.extend({
     if(limit > 10)
       limit = 10;
     
-    getDepartures(stationName, limit, function(timetable) {
+    getDepartures(stationName, limit, function(timetable, err) {
+      if(err)
+      {
+        bot.reply(from, from, 'Ooops: ' + err);
+        return;
+      }
+        
       printArray(bot, from, from, timetable, 0, 500);
     });
   }
@@ -57,7 +63,7 @@ query = function (host, path, argsObject, callback) {
 
     console.log('Query: ' + url);
     var data = '';
-    http.request({ hostname: host, path: url, method: 'GET', port: 80 }, function (resp) {
+    var req = http.request({ hostname: host, path: url, method: 'GET', port: 80 }, function (resp) {
         resp.on('data', function (chunk) {
             data += chunk;
         });
@@ -65,7 +71,11 @@ query = function (host, path, argsObject, callback) {
             var o = JSON.parse(data);
             if (callback) callback(o);             
         });
-    }).end();
+    });
+    req.on('error', function(err) {
+      if(callback) callback(null, err);
+    });
+    req.end();
 }
 
 getDepartures = function (stationName, limit, callback) {
@@ -75,8 +85,19 @@ getDepartures = function (stationName, limit, callback) {
     if (limit)
         args.limit = limit;
 
-    query(hostname, stationPath, args, function (data) {
-        if (!data.station) throw 'No matching station for \'' + stationName + '\' found';
+    query(hostname, stationPath, args, function (data, err) {
+      
+        if(err) {
+          if(callback) callback(null, err);
+          return;
+        }
+          
+        if (!data.station)
+        {
+          timetable.push('No matching station for \'' + stationName + '\' found')
+          if(callback)  callback(timetable);
+          return;
+        }
 
         var timetable = [];
         
