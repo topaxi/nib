@@ -62,7 +62,7 @@ function extractYoutubeTitle(match, callback) {
 function extractGithubTitle(match, callback) {
   var repositoryPath = match.split('github.com')[1]
   var apiUrl = 'https://api.github.com/repos' + repositoryPath
-  getJson(match, function(body) {
+  getJson(apiUrl, function(body) {
     var title = body['description']
 
     callback(title)
