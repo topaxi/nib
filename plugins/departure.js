@@ -15,6 +15,9 @@ module.exports = Command.extend({
      + 'Use limit to read a max number of scheduled departure timestamps.\n'
      + 'Default value for limit is 4, max. is 10\n'
      + 'Results are printed line-by-line and sent using private messages.\n'
+     + 'Note: stationName is not allowed to include any whitespace. Use\n'
+     + 'something like \'Bern,Bärenplatz\' (not \'Bern Bärenplatz\') for\n.'
+     + 'complex station names.'
   , handler: function(from, to, args) {
     var bot = this._bot
 
