@@ -13,7 +13,7 @@ module.exports = Command.extend({
     'Fetches the next scheduled departures from a public transport station.\n'
      + 'Syntax: departure <stationName> [limit]\n'
      + 'Use limit to read a max number of scheduled departure timestamps.\n'
-     + 'Default value for limit is 4, max. is 10\n'
+     + 'Default value for limit is 4, max. is 20\n'
      + 'Results are printed line-by-line and sent using private messages.\n'
      + 'Note: stationName is not allowed to include any whitespace. Use\n'
      + 'something like \'Bern,Bärenplatz\' (not \'Bern Bärenplatz\') for\n.'
@@ -30,8 +30,8 @@ module.exports = Command.extend({
 
     if (parseInt(limit) <= 0 || isNaN(parseInt(limit)))
       limit = 4
-    if (limit > 10)
-      limit = 10
+    if (limit > 20)
+      limit = 20
 
     getDepartures(stationName, limit, function(err, timetable) {
       if (err) {
@@ -114,7 +114,7 @@ getDepartures = function(stationName, limit, callback) {
         + exactStationName + '\'')
     }
     else {
-      timetable.push('Next ' + data.stationboard.length
+      timetable.push('Next ' + limit
         + ' timestamps with a scheduled course from ' + exactStationName + ':')
       for (var i = 0; i < data.stationboard.length; i++) {
         var journey = data.stationboard[i]
