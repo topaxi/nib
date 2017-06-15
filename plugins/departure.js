@@ -56,9 +56,7 @@ query = function(host, path, argsObject, callback) {
   if (!argsObject) callback(new Error('argsObject must be set!'))
 
   var url = path
-  if (argsObject) {
-    url += ('?' + querystring.stringify(argsObject))
-  }
+  url += ('?' + querystring.stringify(argsObject))
 
   var data = ''
   var req = http.request({ hostname: host, path: url, method: 'GET', port: 80 }, function(resp) {
@@ -71,7 +69,7 @@ query = function(host, path, argsObject, callback) {
         callback(null, o)
       }
       catch (err) {
-        callback(err)
+        callback(new Error('Failed to parse data as json data: ' + err))
       }
     });
   });
