@@ -7,120 +7,118 @@ const hostname = 'transport.opendata.ch';
 const stationPath = '/v1/stationboard';
 
 module.exports = Command.extend({
-    name: 'departure'
+  name: 'departure'
   , info: 'Timetable departures'
-  , description: 'Shows the next departures from a public transport station. Syntax:\n'
-                + 'departure <stationName> [limit]\n'
-                + '  Prints the next departures from passed stationName.\n'
-                + '  limit can be a positive integer, to limit number of timestamps\n'
-                + '  (not departures) to return. Defaults to 4, max value is 10.\n'
-                + '  Resulsts will be printed with a private messages to prevent channel flooding'
-  , handler:  function(from, to, args) {
-    var bot = this._bot;
-    
-    if(!args) {
+  , description:
+     'Fetches the next scheduled departures from a public transport station.\n'
+      + 'Syntax: departure <stationName> [limit]\n'
+      + 'Use limit to read a max number of scheduled departure timestamps.\n'
+      + 'Default value for limit is 4, max. is 10\n'
+      + 'Results are printed line-by-line and sent using private messages.\n'
+  , handler: function (from, to, args) {
+    var bot = this._bot
+
+    if (!args) {
       bot.reply(from, from, 'stationName is mandatory!');
-      return;
+      return
     }
-    var stationName = args.split(' ')[0];
-    var limit = args.slice(stationName.length + 1);
-    
+    var stationName = args.split(' ')[0]
+    var limit = args.slice(stationName.length + 1)
+
     if (parseInt(limit) <= 0 || isNaN(parseInt(limit)))
-      limit = 4;
-    if(limit > 10)
-      limit = 10;
-    
-    getDepartures(stationName, limit, function(timetable, err) {
-      if(err)
-      {
-        bot.reply(from, from, 'Ooops: ' + err);
-        return;
+      limit = 4
+    if (limit > 10)
+      limit = 10
+
+    getDepartures(stationName, limit, function (timetable, err) {
+      if (err) {
+        bot.reply(from, from, 'Ooops: ' + err)
+        return
       }
-        
-      printArray(bot, from, from, timetable, 0, 500);
-    });
+
+      printArray(bot, from, from, timetable, 0, 500)
+    })
   }
 })
 
 printArray = function (bot, from, to, arr, start, delay) {
-    if (start >= arr.length)
-      return;
-    
-    bot.reply(from, to, arr[start]);
-    start++;
-    setTimeout(function () { printArray(bot, from, to, arr, start, delay) }, delay);
+  if (start >= arr.length)
+    return
+
+  bot.reply(from, to, arr[start])
+  start++
+  setTimeout(function () { printArray(bot, from, to, arr, start, delay) }, delay)
 }
 
 query = function (host, path, argsObject, callback) {
-    if (!host) callback(null, 'host must be set!');
-    if (!path) callback(null, 'path must be set!');
-    if (!argsObject) callback(null, 'argsObject must be set!');
+  if (!host) callback(null, 'host must be set!')
+  if (!path) callback(null, 'path must be set!')
+  if (!argsObject) callback(null, 'argsObject must be set!')
 
-    var url = path;
-    if (argsObject) {
-      url += ('?' + querystring.stringify(argsObject));
-    }
+  var url = path
+  if (argsObject) {
+    url += ('?' + querystring.stringify(argsObject))
+  }
 
-    console.log('Query: ' + url);
-    var data = '';
-    var req = http.request({ hostname: host, path: url, method: 'GET', port: 80 }, function (resp) {
-      resp.on('data', function (chunk) {
-          data += chunk;
-      });
-      resp.on('end', function () {
-        try {
-          var o = JSON.parse(data);
-          if (callback) callback(o);                       
-        }
-        catch(e) {
-          if(callback) callback(null, 'Failed to parse json data: ' + e);
-        }
-      });
+  console.log('Query: ' + url)
+  var data = ''
+  var req = http.request({ hostname: host, path: url, method: 'GET', port: 80 }, function (resp) {
+    resp.on('data', function (chunk) {
+      data += chunk
     });
-    req.on('error', function(err) {
-      if(callback) callback(null, err);
+    resp.on('end', function () {
+      try {
+        var o = JSON.parse(data);
+        if (callback) callback(o)
+      }
+      catch (e) {
+        if (callback) callback(null, 'Failed to parse json data: ' + e)
+      }
     });
-    req.end();
+  });
+  req.on('error', function (err) {
+    if (callback) callback(null, err)
+  });
+  req.end();
 }
 
 getDepartures = function (stationName, limit, callback) {
-    if (!stationName) callback(null, 'stationName must be set!');
+  if (!stationName) callback(null, 'stationName must be set!')
 
-    var args = { station: stationName };
-    if (limit)
-      args.limit = limit;
+  var args = { station: stationName }
+  if (limit)
+    args.limit = limit
 
-    query(hostname, stationPath, args, function (data, err) {
-      
-      if(err) {
-        if(callback) callback(null, err);
-        return;
-      }
-        
-      if (!data.station)
-      {
-        timetable.push('No matching station for \'' + stationName + '\' found')
-        if(callback)  callback(timetable);
-        return;
-      }
+  query(hostname, stationPath, args, function (data, err) {
 
-      var timetable = [];
-      
-      var exactStationName = data.station.name;
-      if (!data.stationboard || data.stationboard.length == 0) {
-        timetable.push('No departures found for station \'' + exactStationName + '\'');
+    if (err) {
+      if (callback) callback(null, err);
+      return
+    }
+
+    if (!data.station) {
+      timetable.push('No matching station for \'' + stationName + '\' found')
+      if (callback) callback(timetable)
+      return
+    }
+
+    var timetable = []
+
+    var exactStationName = data.station.name
+    if (!data.stationboard || data.stationboard.length == 0) {
+      timetable.push('No departures found for station \'' + exactStationName + '\'')
+    }
+    else {
+      timetable.push('Next ' + data.stationboard.length + ' departures from ' + exactStationName + ':')
+      for (var i = 0; i < data.stationboard.length; i++) {
+        var journey = data.stationboard[i]
+        var dep = new Date(journey.stop.departure)
+        var msg = journey.name + ' to ' + journey.to + ' at ' + dep.toLocaleTimeString()
+        if (journey.stop.platform)
+          msg += ' from platform ' + journey.stop.platform
+        timetable.push(msg)
       }
-      else {  
-        timetable.push('Next ' + data.stationboard.length + ' departures from ' + exactStationName + ':');
-        for (var i = 0; i < data.stationboard.length; i++) {
-            var journey = data.stationboard[i];
-            var dep = new Date(journey.stop.departure);
-            var msg = journey.name + ' to ' + journey.to + ' at ' + dep.toLocaleTimeString();
-            if (journey.stop.platform)
-                msg += ' from platform ' + journey.stop.platform;
-            timetable.push(msg);
-        }
-      }
-      if(callback) callback(timetable);
-    });
+    }
+    if (callback) callback(timetable)
+  });
 }
