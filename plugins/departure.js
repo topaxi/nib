@@ -110,23 +110,28 @@ getDepartures = function(stationName, limit, callback) {
       return
     }
 
-    var exactStationName = data.station.name
-    if (!data.stationboard || data.stationboard.length == 0) {
-      timetable.push('No departures found for station \''
-        + exactStationName + '\'')
-    }
-    else {
-      timetable.push('Next scheduled courses from ' + exactStationName + ':')
-      for (var i = 0; i < data.stationboard.length; i++) {
-        var journey = data.stationboard[i]
-        var dep = new Date(journey.stop.departure)
-        var msg = journey.name + ' to ' + journey.to + ' at '
-          + dep.toLocaleTimeString()
-        if (journey.stop.platform)
-          msg += ' from platform ' + journey.stop.platform
-        timetable.push(msg)
+    try {
+      var exactStationName = data.station.name
+      if (!data.stationboard || data.stationboard.length == 0) {
+        timetable.push('No departures found for station \''
+          + exactStationName + '\'')
       }
+      else {
+        timetable.push('Next scheduled courses from ' + exactStationName + ':')
+        for (var i = 0; i < data.stationboard.length; i++) {
+          var journey = data.stationboard[i]
+          var dep = new Date(journey.stop.departure)
+          var msg = journey.name + ' to ' + journey.to + ' at '
+            + dep.toLocaleTimeString()
+          if (journey.stop.platform)
+            msg += ' from platform ' + journey.stop.platform
+          timetable.push(msg)
+        }
+      }
+      callback(null, timetable)
     }
-    callback(null, timetable)
+    catch (err) {
+      callback(new Error('Failed to parse returned data: ' + err))
+    }
   });
 }
