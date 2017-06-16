@@ -124,6 +124,7 @@ getDepartures = function(stationName, limit, time, callback) {
   var args = { station: stationName }
   if (limit)
     args.limit = limit
+
   if (time) {
     // where is printf?
     var Y = time.getUTCFullYear();
@@ -136,7 +137,7 @@ getDepartures = function(stationName, limit, time, callback) {
     args.datetime = str;
   }
 
-  query(hostname, stationPath, args, function(err, data) {
+  query(hostname, stationPath, args, function (err, data) {
     if (err) {
       callback(err);
       return
