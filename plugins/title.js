@@ -90,7 +90,7 @@ module.exports = function(bot, options) {
       })
     }
 
-    var github = /https?:\/\/(?:www\.)?github\.com\/[a-zA-Z\d-]{3,99}\/[a-zA-Z\d-_]{3,99}/.exec(msg)
+    var github = /https?:\/\/(?:www\.)?github\.com\/[a-zA-Z\d-]{3,99}\/[a-zA-Z\d-_\.]{3,99}/.exec(msg)
     if (github) {
       return extractGithubTitle(github[0], function(title) {
         bot.say(channel, 'GitHub: ' + title)
