@@ -83,14 +83,14 @@ module.exports = function(bot, options) {
       })
     }
 
-    var youtube = /https?:\/\/(?:www\.)?(?:youtube.com\/(?:v\/|embed\/|watch(?:\?v=|\/))|youtu.be\/)[a-zA-Z0-9-_]+/.exec(msg)
+    var youtube = /https?:\/\/(?:www\.)?(?:youtube.com\/(?:v\/|embed\/|watch(?:\?v=|\/))|youtu.be\/)[a-zA-Z\d-_]+/.exec(msg)
     if (youtube) {
       return extractYoutubeTitle(youtube[0], function(title) {
         bot.say(channel, 'Youtube: ' + title)
       })
     }
 
-    var github = /https?:\/\/(?:www\.)?github\.com\/[a-z]{3,99}\/[a-z]{3,99}/.exec(msg)
+    var github = /https?:\/\/(?:www\.)?github\.com\/[a-zA-Z\d-]{3,99}\/[a-zA-Z\d-_\.]{3,99}/.exec(msg)
     if (github) {
       return extractGithubTitle(github[0], function(title) {
         bot.say(channel, 'GitHub: ' + title)
