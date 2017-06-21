@@ -48,10 +48,10 @@ module.exports = Command.extend({
       var tempNow = temp.measureValueTemperature
       var predict
 
-      if (tempFuture > tempNow) {
+      if (tempFuture > 0) {
         predict = 'u si wird schins wermer'
       }
-      else if (tempFuture < tempNow) {
+      else if (tempFuture < 0) {
         predict = 'aber si wird schins cheuter'
       }
       else {
