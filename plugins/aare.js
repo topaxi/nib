@@ -44,8 +44,8 @@ module.exports = Command.extend({
         return
       }
 
-      var tempFuture = temp.measureValueTemperatureFuture
-      var tempNow = temp.measureValueTemperature
+      var tempFuture = temp.tf
+      var tempNow = temp.t
       var predict
 
       if (tempFuture > 0) {
